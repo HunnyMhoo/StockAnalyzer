@@ -1,0 +1,23 @@
+# Core data fetching dependencies
+yfinance>=0.2.18
+pandas>=1.5.0
+
+# Jupyter notebook environment
+jupyter>=1.0.0
+notebook>=6.4.0
+ipykernel>=6.0.0
+
+# Progress bars and UI enhancements
+tqdm>=4.64.0
+
+# Visualization for data validation
+matplotlib>=3.5.0
+seaborn>=0.11.0
+
+# Testing dependencies
+pytest>=7.0.0
+pytest-mock>=3.10.0
+
+# Code quality
+black>=22.0.0
+flake8>=4.0.0 

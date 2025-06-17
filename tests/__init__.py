@@ -1,0 +1,1 @@
+# Test package for Stock Pattern Recognition Engine 
