@@ -1,21 +1,34 @@
-# Stock Pattern Recognition Engine - Data Collection Module
+# Stock Pattern Recognition Engine
 
-A Jupyter notebook-friendly data fetching and caching system for Hong Kong stocks, designed to support chart pattern recognition and machine learning model training.
+A comprehensive system for Hong Kong stock analysis featuring data collection, pattern labeling, and feature extraction capabilities designed for machine learning model training.
 
 ## 🎯 Project Overview
 
-This module provides the foundational data layer for a personal stock pattern recognition system. It fetches daily OHLCV (Open, High, Low, Close, Volume) data from Yahoo Finance with intelligent local caching to minimize API calls and improve performance.
+This system provides a complete pipeline for stock pattern recognition and analysis. It includes data collection, manual pattern labeling, feature extraction, and technical analysis capabilities for Hong Kong stocks. The system fetches daily OHLCV (Open, High, Low, Close, Volume) data from Yahoo Finance with intelligent local caching, allows manual labeling of chart patterns, and extracts numerical features suitable for machine learning model training.
 
 ## ✨ Features
 
+### Data Collection
 - **🔄 Intelligent Caching**: Automatic local caching with incremental updates
 - **📊 Hong Kong Stock Focus**: Optimized for HK stock ticker formats (e.g., `0700.HK`)
 - **📓 Jupyter Notebook Ready**: Designed for interactive data science workflows
 - **🚀 Progress Tracking**: Visual progress bars and detailed status updates
 - **⚡ Efficient Updates**: Only fetches missing data, not entire datasets
 - **🛡️ Error Handling**: Robust error handling with retry logic
-- **🔍 Data Validation**: Automatic data quality checks and validation
-- **📈 Rich Output**: Formatted displays with emojis and clear status messages
+
+### Pattern Labeling
+- **🏷️ Manual Pattern Labeling**: Interactive system for defining chart patterns
+- **📝 JSON Persistence**: Structured storage with validation and error handling
+- **📊 Pattern Visualization**: Optional candlestick chart overlays (with mplfinance)
+- **✅ Comprehensive Validation**: Date range, ticker format, and data integrity checks
+- **🔄 Pattern Management**: Add, load, and manage pattern collections
+
+### Feature Extraction
+- **🔢 18+ Numerical Features**: Comprehensive feature set across 4 categories
+- **📈 Technical Indicators**: 15+ indicators including SMA, RSI, MACD, Bollinger Bands
+- **⚙️ Configurable Windows**: Customizable analysis periods and parameters
+- **📄 ML-Ready Output**: CSV format optimized for machine learning workflows
+- **🔍 Data Quality Checks**: Missing value detection and validation
 
 ## 🚀 Quick Start
 
@@ -30,10 +43,11 @@ This module provides the foundational data layer for a personal stock pattern re
    ```bash
    jupyter notebook
    ```
-4. **Open** `notebooks/01_data_collection.ipynb`
+4. **Open** `notebooks/01_data_collection.ipynb` or `notebooks/04_feature_extraction.ipynb`
 
 ### Basic Usage
 
+#### Data Collection
 ```python
 # Import the data fetching functions
 from src.data_fetcher import fetch_hk_stocks
@@ -51,21 +65,68 @@ tencent_data = stock_data['0700.HK']
 print(tencent_data.head())
 ```
 
+#### Pattern Labeling
+```python
+# Import pattern labeling functions
+from src.pattern_labeler import PatternLabel, PatternLabeler
+
+# Create a pattern label
+pattern = PatternLabel(
+    ticker="0700.HK",
+    start_date="2023-02-10", 
+    end_date="2023-03-03",
+    label_type="positive",
+    notes="Strong upward breakout pattern"
+)
+
+# Save to collection
+labeler = PatternLabeler()
+labeler.add_pattern(pattern)
+labeler.save_patterns("labels/my_patterns.json")
+```
+
+#### Feature Extraction
+```python
+# Import feature extraction functions
+from src.feature_extractor import extract_features_from_labels
+
+# Extract features from all labeled patterns
+features_df = extract_features_from_labels(
+    labels_file="labels/labeled_patterns.json",
+    output_file="features/labeled_features.csv"
+)
+
+print(f"Extracted {len(features_df)} feature sets with {features_df.shape[1]} columns")
+```
+
 ## 📁 Project Structure
 
 ```
 StockAnalyze/
 ├── src/
 │   ├── __init__.py
-│   └── data_fetcher.py          # Core data fetching logic
+│   ├── data_fetcher.py          # Core data fetching logic
+│   ├── pattern_labeler.py       # Manual pattern labeling system
+│   ├── pattern_visualizer.py    # Optional chart visualization
+│   ├── feature_extractor.py     # Feature extraction for ML
+│   └── technical_indicators.py  # Technical analysis indicators
 ├── notebooks/
-│   └── 01_data_collection.ipynb # Main data collection notebook
+│   ├── 01_data_collection.ipynb      # Data collection notebook
+│   ├── pattern_labeling_demo.ipynb   # Pattern labeling demo
+│   └── 04_feature_extraction.ipynb   # Feature extraction notebook
 ├── tests/
 │   ├── __init__.py
-│   └── test_data_fetcher.py     # Comprehensive unit tests
-├── data/                        # Auto-created cache directory
-├── requirements.txt             # Python dependencies
-└── README.md                    # This file
+│   ├── test_data_fetcher.py          # Data fetching tests
+│   ├── test_pattern_labeler.py       # Pattern labeling tests
+│   ├── test_feature_extractor.py     # Feature extraction tests
+│   └── test_technical_indicators.py  # Technical indicators tests
+├── examples/
+│   └── feature_extraction_example.py # Feature extraction examples
+├── data/                             # Auto-created cache directory
+├── labels/                           # Pattern labels storage
+├── features/                         # Extracted features storage
+├── requirements.txt                  # Python dependencies
+└── README.md                         # This file
 ```
 
 ## 🔧 API Reference
@@ -260,13 +321,13 @@ preview_cached_data('0700.HK')
 
 ## 🔄 Next Steps
 
-This data collection module provides the foundation for:
+This system currently provides data collection, pattern labeling, and feature extraction. Future development includes:
 
-1. **📊 Pattern Labeling**: Manually label chart patterns on fetched data
-2. **🔧 Feature Engineering**: Extract technical indicators and features  
-3. **🤖 Model Training**: Train ML models on labeled patterns
-4. **🔍 Pattern Detection**: Scan new data for similar patterns
-5. **📈 Backtesting**: Validate pattern performance over time
+1. **🤖 Model Training**: Train ML models on extracted features
+2. **🔍 Pattern Detection**: Automated pattern recognition algorithms
+3. **📈 Backtesting**: Validate pattern performance over time
+4. **⚡ Real-time Analysis**: Live pattern detection and alerting
+5. **🎯 Advanced Features**: Additional technical indicators and pattern types
 
 ## 🤝 Contributing
 
