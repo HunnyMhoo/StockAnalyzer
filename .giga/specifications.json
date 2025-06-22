@@ -1,0 +1,22 @@
+[
+  {
+    "fileName": "main-overview.mdc",
+    "description": "High-level system architecture overview documenting the pattern recognition pipeline, core components, and their interactions for Hong Kong stock analysis"
+  },
+  {
+    "fileName": "data-models-patterns.mdc",
+    "description": "Comprehensive documentation of pattern data structures, feature sets, and label classifications including the 18 technical features across 4 categories and their relationships"
+  },
+  {
+    "fileName": "pattern-recognition-algorithms.mdc",
+    "description": "Detailed documentation of core pattern recognition algorithms including trend analysis, support break detection, correction phase analysis, and technical indicator calculations"
+  },
+  {
+    "fileName": "data-flow-pipeline.mdc",
+    "description": "Documentation of the data flow between components from initial data collection through feature extraction, pattern labeling, model training and evaluation"
+  },
+  {
+    "fileName": "hk-market-rules.mdc",
+    "description": "Specialized documentation of Hong Kong market-specific business rules, validation requirements, and trading pattern criteria implemented throughout the system"
+  }
+]

@@ -389,6 +389,81 @@ class FeatureExtractor:
         
         return features
     
+    def extract_features_from_window_data(self, 
+                                         window_data: pd.DataFrame,
+                                         prior_context_data: Optional[pd.DataFrame],
+                                         ticker: str,
+                                         start_date: str,
+                                         end_date: str,
+                                         full_data: Optional[pd.DataFrame] = None) -> Optional[Dict[str, Union[str, float]]]:
+        """
+        Extract features from window data without requiring a PatternLabel.
+        
+        This method is used by the PatternScanner for unlabeled feature extraction.
+        
+        Args:
+            window_data: OHLCV data for the pattern window
+            prior_context_data: Prior context data (can be None)
+            ticker: Stock ticker symbol
+            start_date: Window start date string
+            end_date: Window end date string
+            full_data: Complete dataset for support level calculation (optional)
+            
+        Returns:
+            Dict or None: Feature dictionary or None if extraction failed
+        """
+        try:
+            # Validate window data
+            if not self._validate_window_data(window_data, ticker):
+                return None
+            
+            # Find window start index in full dataset (for support break features)
+            window_start_idx = 0
+            if full_data is not None:
+                try:
+                    start_dt = pd.to_datetime(start_date)
+                    matching_dates = full_data.index[full_data.index >= start_dt]
+                    if len(matching_dates) > 0:
+                        loc_result = full_data.index.get_loc(matching_dates[0])
+                        window_start_idx = int(loc_result) if isinstance(loc_result, (int, np.integer)) else 0
+                except Exception:
+                    window_start_idx = 0
+            
+            # Initialize feature dictionary with metadata
+            features: Dict[str, Union[str, float]] = {
+                "ticker": ticker,
+                "start_date": start_date,
+                "end_date": end_date,
+                "label_type": "unlabeled",  # Mark as unlabeled
+                "notes": "Pattern scanning extraction"
+            }
+            
+            # Calculate feature categories
+            trend_features = self._calculate_trend_features(window_data, prior_context_data)
+            correction_features = self._calculate_correction_features(window_data)
+            
+            # For support break features, use full_data if available, otherwise use window_data
+            support_data = full_data if full_data is not None else window_data
+            support_features = self._calculate_support_break_features(window_data, support_data, window_start_idx)
+            
+            technical_features = self._calculate_technical_indicators(window_data)
+            
+            # Combine all features
+            for key, value in trend_features.items():
+                features[key] = value
+            for key, value in correction_features.items():
+                features[key] = value
+            for key, value in support_features.items():
+                features[key] = value
+            for key, value in technical_features.items():
+                features[key] = value
+            
+            return features
+            
+        except Exception as e:
+            warnings.warn(f"Failed to extract features for {ticker} ({start_date} to {end_date}): {e}")
+            return None
+
     def extract_features_from_label(self, label: PatternLabel) -> Optional[Dict[str, Union[str, float]]]:
         """
         Extract features from a single pattern label.

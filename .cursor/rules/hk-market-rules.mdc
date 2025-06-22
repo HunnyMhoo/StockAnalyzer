@@ -1,0 +1,56 @@
+---
+description: Rules and requirements specific to Hong Kong stock market data processing and pattern analysis
+globs: src/hk_stock_universe.py,src/bulk_data_fetcher.py,src/data_fetcher.py,src/pattern_*.py
+alwaysApply: false
+---
+
+
+# hk-market-rules
+
+## HK Stock Validation Rules (Importance: 95)
+- Strict ticker format validation using pattern `^\d{4}\.HK$`
+- Stock categories: Blue chips, Tech, Finance, Property
+- Trading calendar adjustments for HK market holidays (~250 trading days/year)
+- Market cap thresholds (minimum 1B HKD)
+- Market hours alignment with HK timezone
+
+## Data Collection Rules (Importance: 85)
+- Three-tier fetching strategies:
+  - Conservative: 50 stocks, 10-15 batch size, 3-5s delays
+  - Balanced: 100-200 stocks, 20 batch size, 2-3s delays
+  - Comprehensive: 500+ stocks, 25-30 batch size, 2-3s delays
+- HK exchange-specific rate limiting
+- Intelligent caching with trading day validation
+
+## Pattern Analysis Requirements (Importance: 90)
+1. Technical Feature Validation:
+- Support/resistance break patterns require:
+  - 30-day prior context window
+  - 10-day minimum for support level detection
+  - Volume confirmation above 50-day average
+
+2. Pattern Classification Rules:
+- Strict date range validation for HK market hours
+- No overlapping patterns allowed for same ticker
+- Three-state classification system (positive/negative/neutral)
+
+## Market-Specific Processing (Importance: 80)
+1. Data Quality Controls:
+- OHLCV completeness validation
+- Trading suspension detection
+- Pre/post market data filtering
+
+2. Trading Calendar Rules:
+- HK holiday gap handling
+- Trading suspension periods
+- Market session boundaries
+
+File Paths:
+- src/hk_stock_universe.py
+- src/data_fetcher.py
+- src/pattern_labeler.py
+- src/bulk_data_fetcher.py
+
+$END$
+
+ If you're using this file in context, clearly say in italics in one small line that "Context added by Giga hk-market-rules".
