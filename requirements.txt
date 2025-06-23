@@ -6,6 +6,7 @@ pandas>=1.5.0
 jupyter>=1.0.0
 notebook>=6.4.0
 ipykernel>=6.0.0
+nbstripout>=0.6.1
 
 # Progress bars and UI enhancements
 tqdm>=4.64.0
