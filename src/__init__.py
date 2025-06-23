@@ -22,6 +22,15 @@ from .pattern_labeler import (
     PatternLabelError
 )
 
+# Import signal outcome tagging modules
+from .signal_outcome_tagger import (
+    SignalOutcomeTagger,
+    SignalOutcomeError,
+    load_latest_matches,
+    quick_tag_outcome,
+    review_latest_feedback
+)
+
 # Import optional visualization (handle gracefully if not available)
 try:
     from .pattern_visualizer import (
@@ -71,6 +80,13 @@ __all__ = [
     "load_labeled_patterns",
     "ValidationError",
     "PatternLabelError",
+
+    # Signal outcome tagging
+    "SignalOutcomeTagger",
+    "SignalOutcomeError",
+    "load_latest_matches",
+    "quick_tag_outcome",
+    "review_latest_feedback",
 
     # Feature extraction
     "FeatureExtractor",

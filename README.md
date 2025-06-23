@@ -30,6 +30,13 @@ This system provides a complete pipeline for stock pattern recognition and analy
 - **📄 ML-Ready Output**: CSV format optimized for machine learning workflows
 - **🔍 Data Quality Checks**: Missing value detection and validation
 
+### Signal Outcome Tagging
+- **📋 Manual Feedback Collection**: Tag pattern match predictions with success/failure outcomes
+- **🎯 Confidence Band Analysis**: Performance review by confidence score ranges
+- **🔄 Feedback Loop Integration**: Enable continuous model improvement through real trading results
+- **💾 Safe File Operations**: Automatic backups and versioned labeled outputs
+- **📊 Performance Tracking**: Statistical analysis of prediction accuracy over time
+
 ## 🚀 Quick Start
 
 ### Installation
@@ -99,6 +106,30 @@ features_df = extract_features_from_labels(
 print(f"Extracted {len(features_df)} feature sets with {features_df.shape[1]} columns")
 ```
 
+#### Signal Outcome Tagging
+```python
+# Import signal outcome tagging functions
+from src.signal_outcome_tagger import SignalOutcomeTagger, quick_tag_outcome
+
+# Load latest match file and tag an outcome
+tagger = SignalOutcomeTagger()
+df = tagger.load_matches_file("signals/matches_20250622_212629.csv")
+
+# Tag individual match outcome
+tagger.tag_outcome(
+    ticker="0005.HK",
+    window_start_date="2024-06-14",
+    outcome="success",
+    feedback_notes="Breakout confirmed after 5 days"
+)
+
+# Save labeled results
+tagger.save_labeled_matches("signals/matches_20250622_212629_labeled.csv")
+
+# Review feedback by confidence bands
+tagger.review_feedback()
+```
+
 ## 📁 Project Structure
 
 ```
@@ -108,12 +139,14 @@ StockAnalyze/
 │   ├── data_fetcher.py          # Core data fetching logic
 │   ├── pattern_labeler.py       # Manual pattern labeling system
 │   ├── pattern_visualizer.py    # Optional chart visualization
+│   ├── signal_outcome_tagger.py # Signal outcome tagging for feedback
 │   ├── feature_extractor.py     # Feature extraction for ML
 │   └── technical_indicators.py  # Technical analysis indicators
 ├── notebooks/
 │   ├── 01_data_collection.ipynb      # Data collection notebook
 │   ├── pattern_labeling_demo.ipynb   # Pattern labeling demo
-│   └── 04_feature_extraction.ipynb   # Feature extraction notebook
+│   ├── 04_feature_extraction.ipynb   # Feature extraction notebook
+│   └── 08_signal_outcome_tagging.ipynb # Signal outcome tagging workflow
 ├── tests/
 │   ├── __init__.py
 │   ├── test_data_fetcher.py          # Data fetching tests
