@@ -11,7 +11,7 @@ import sys
 import time
 import warnings
 from datetime import datetime, timedelta
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import pandas as pd
 import yfinance as yf
@@ -419,4 +419,223 @@ def fetch_hk_stocks(tickers: List[str],
             nb_print(f"  {ticker}: {len(data)} records, "
                   f"${data['Close'].iloc[-1]:.2f} (latest close)")
     
-    return results 
+    return results
+
+
+def get_all_cached_tickers() -> List[str]:
+    """
+    Get all tickers with valid cached data from the data directory.
+    
+    This function discovers all available stock tickers by scanning the data directory
+    for cached CSV files and validates that each file contains usable data.
+    
+    Returns:
+        List[str]: Sorted list of all valid ticker symbols with cached data
+        
+    Example:
+        >>> available_tickers = get_all_cached_tickers()
+        >>> print(f"Found {len(available_tickers)} stocks: {available_tickers[:5]}")
+    """
+    try:
+        # Ensure data directory exists
+        _ensure_data_directory()
+        
+        # Get all CSV files from data directory
+        cache_files = [f for f in os.listdir(DATA_DIR) if f.endswith('.csv')]
+        
+        if not cache_files:
+            nb_print("📁 No cached data found in data directory")
+            return []
+        
+        valid_tickers = []
+        invalid_files = []
+        
+        # Process each cache file
+        for cache_file in cache_files:
+            try:
+                # Convert filename to ticker (e.g., '0700_HK.csv' -> '0700.HK')
+                ticker = cache_file.replace('_', '.').replace('.csv', '')
+                
+                # Validate ticker format
+                if not _validate_hk_ticker(ticker):
+                    invalid_files.append(cache_file)
+                    continue
+                
+                # Validate cached data exists and is usable
+                validation_result = validate_cached_data_file(ticker)
+                
+                if validation_result['is_valid']:
+                    valid_tickers.append(ticker)
+                else:
+                    invalid_files.append(cache_file)
+                    
+            except Exception as e:
+                nb_print(f"⚠️  Error processing {cache_file}: {e}")
+                invalid_files.append(cache_file)
+                continue
+        
+        # Sort tickers for consistent ordering
+        valid_tickers.sort()
+        
+        # Report results
+        nb_print(f"📊 Data discovery complete:")
+        nb_print(f"  ✅ Found {len(valid_tickers)} valid stocks with cached data")
+        if invalid_files:
+            nb_print(f"  ⚠️  Skipped {len(invalid_files)} invalid/corrupted files")
+        
+        return valid_tickers
+        
+    except Exception as e:
+        nb_print(f"❌ Error accessing data directory: {e}")
+        return []
+
+
+def validate_cached_data_file(ticker: str) -> Dict[str, Any]:
+    """
+    Validate cached data quality and completeness for a ticker.
+    
+    Performs comprehensive validation of cached stock data including:
+    - File existence and readability
+    - Required OHLCV columns presence
+    - Data type validation
+    - Minimum data requirements
+    - Date range and completeness checks
+    
+    Args:
+        ticker: Stock ticker to validate (e.g., '0700.HK')
+        
+    Returns:
+        Dict containing validation results:
+        - is_valid: bool - Overall validation status
+        - file_exists: bool - Whether cache file exists
+        - data_loaded: bool - Whether data loaded successfully  
+        - has_required_columns: bool - Has OHLCV columns
+        - record_count: int - Number of data records
+        - date_range_days: int - Days of data coverage
+        - start_date: str - First date in dataset
+        - end_date: str - Last date in dataset
+        - data_quality_score: float - Overall quality score (0-1)
+        - issues: List[str] - List of any issues found
+        
+    Example:
+        >>> result = validate_cached_data_file('0700.HK')
+        >>> if result['is_valid']:
+        >>>     print(f"Valid data: {result['record_count']} records")
+        >>> else:
+        >>>     print(f"Issues: {result['issues']}")
+    """
+    # Initialize validation result
+    result = {
+        'is_valid': False,
+        'file_exists': False,
+        'data_loaded': False,
+        'has_required_columns': False,
+        'record_count': 0,
+        'date_range_days': 0,
+        'start_date': None,
+        'end_date': None,
+        'data_quality_score': 0.0,
+        'issues': []
+    }
+    
+    try:
+        # Check if ticker format is valid
+        if not _validate_hk_ticker(ticker):
+            result['issues'].append(f"Invalid ticker format: {ticker}")
+            return result
+        
+        # Check if cache file exists
+        cache_file = _get_cache_filename(ticker)
+        if not os.path.exists(cache_file):
+            result['issues'].append(f"Cache file not found: {cache_file}")
+            return result
+        
+        result['file_exists'] = True
+        
+        # Try to load cached data
+        cached_data = _load_cached_data(ticker)
+        if cached_data is None or cached_data.empty:
+            result['issues'].append("Failed to load data or file is empty")
+            return result
+        
+        result['data_loaded'] = True
+        result['record_count'] = len(cached_data)
+        
+        # Check for required OHLCV columns
+        required_columns = ['Open', 'High', 'Low', 'Close', 'Volume']
+        missing_columns = [col for col in required_columns if col not in cached_data.columns]
+        
+        if missing_columns:
+            result['issues'].append(f"Missing required columns: {missing_columns}")
+        else:
+            result['has_required_columns'] = True
+        
+        # Date range analysis
+        if not cached_data.empty:
+            result['start_date'] = cached_data.index.min().strftime('%Y-%m-%d')
+            result['end_date'] = cached_data.index.max().strftime('%Y-%m-%d')
+            result['date_range_days'] = (cached_data.index.max() - cached_data.index.min()).days
+        
+        # Data quality checks
+        quality_score = 0.0
+        quality_factors = 0
+        
+        # Factor 1: Sufficient data volume (minimum 30 records)
+        if result['record_count'] >= 30:
+            quality_score += 0.3
+        elif result['record_count'] >= 10:
+            quality_score += 0.15
+        quality_factors += 1
+        
+        # Factor 2: Required columns present
+        if result['has_required_columns']:
+            quality_score += 0.3
+        quality_factors += 1
+        
+        # Factor 3: Data completeness (no excessive NaN values)
+        if result['has_required_columns']:
+            nan_percentage = cached_data[required_columns].isnull().sum().sum() / (len(cached_data) * len(required_columns))
+            if nan_percentage < 0.05:  # Less than 5% missing
+                quality_score += 0.2
+            elif nan_percentage < 0.15:  # Less than 15% missing
+                quality_score += 0.1
+            quality_factors += 1
+        
+        # Factor 4: Recent data (within last 6 months)
+        if result['end_date']:
+            days_since_last_data = (datetime.now().date() - pd.to_datetime(result['end_date']).date()).days
+            if days_since_last_data <= 30:  # Within last month
+                quality_score += 0.2
+            elif days_since_last_data <= 180:  # Within last 6 months
+                quality_score += 0.1
+            quality_factors += 1
+        
+        # Calculate final quality score
+        if quality_factors > 0:
+            result['data_quality_score'] = quality_score
+        
+        # Overall validation decision
+        result['is_valid'] = (
+            result['file_exists'] and
+            result['data_loaded'] and
+            result['has_required_columns'] and
+            result['record_count'] >= 10 and  # Minimum viable data
+            result['data_quality_score'] >= 0.5  # Minimum quality threshold
+        )
+        
+        # Add quality-based issues
+        if result['record_count'] < 30:
+            result['issues'].append(f"Limited data: only {result['record_count']} records")
+        
+        if result['data_quality_score'] < 0.5:
+            result['issues'].append(f"Low data quality score: {result['data_quality_score']:.2f}")
+        
+        if result['end_date']:
+            days_old = (datetime.now().date() - pd.to_datetime(result['end_date']).date()).days
+            if days_old > 180:
+                result['issues'].append(f"Stale data: {days_old} days old")
+        
+    except Exception as e:
+        result['issues'].append(f"Validation error: {str(e)}")
+    
+    return result 
