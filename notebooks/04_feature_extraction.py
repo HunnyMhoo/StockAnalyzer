@@ -1,7 +1,9 @@
 # ---
 # jupyter:
 #   jupytext:
+#     cell_metadata_filter: -all
 #     formats: ipynb,py:percent
+#     notebook_metadata_filter: all,-language_info,-toc,-latex_envs
 #     text_representation:
 #       extension: .py
 #       format_name: percent
@@ -13,7 +15,7 @@
 #     name: python3
 # ---
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # # Feature Extraction from Labeled Stock Patterns
 #
 # This notebook demonstrates how to extract numerical features from labeled stock patterns using the FeatureExtractor class. These features can then be used for machine learning model training.
@@ -24,7 +26,7 @@
 # - Save results to CSV for ML training
 #
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## Setup and Imports
 #
 
@@ -47,12 +49,13 @@ sys.path.append('..')
 from src.feature_extractor import FeatureExtractor, extract_features_from_labels
 from src.pattern_labeler import PatternLabel, load_labeled_patterns
 from src.data_fetcher import fetch_hk_stocks, list_cached_tickers
+from IPython.display import display
 
 print("✅ All imports successful!")
 print(f"📅 Notebook run time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## Check Available Data
 #
 
@@ -88,7 +91,7 @@ else:
     labeled_patterns = []
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## Method 1: Extract Features from Labeled Patterns File
 #
 # This is the main use case - extracting features from all labeled patterns at once.
@@ -124,7 +127,7 @@ else:
     features_df = pd.DataFrame()
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## Feature Analysis and Summary
 #
 # Analyze the extracted features and show statistics.
@@ -133,7 +136,7 @@ else:
 # %% [markdown]
 #
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## Optional: Refresh Data Cache
 #
 # If you're experiencing data issues, you can refresh the cached data for your tickers.
@@ -153,7 +156,7 @@ print(f"📅 Refreshing data from {start_date} to {end_date}")
 for ticker in tickers:
     print(f"🔄 Refreshing {ticker}...")
     try:
-        data = fetch_hk_stocks([ticker], start_date, end_date, force_refresh=True)
+        data = fetch_hk_stocks([ticker], start_date, end_date, force_refresh=False)
         if ticker in data:
             print(f"✅ {ticker}: {len(data[ticker])} records")
         else:
@@ -210,7 +213,7 @@ else:
     print("⚠️  No features available to analyze")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## Summary and Next Steps
 #
 # Review what was accomplished and suggest next steps.

@@ -1,7 +1,9 @@
 # ---
 # jupyter:
 #   jupytext:
+#     cell_metadata_filter: -all
 #     formats: ipynb,py:percent
+#     notebook_metadata_filter: all,-language_info,-toc,-latex_envs
 #     text_representation:
 #       extension: .py
 #       format_name: percent
@@ -13,7 +15,7 @@
 #     name: python3
 # ---
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # # Hong Kong Stock Bulk Data Collection - Comprehensive Guide
 #
 # This notebook provides **efficient, production-ready approaches** for bulk fetching Hong Kong stock data.
@@ -38,7 +40,7 @@
 # **📝 Note**: Run the Setup section first, then choose your preferred approach.
 #
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## 🔧 **Setup & Configuration**
 #
 # **Run this section first** - All subsequent cells depend on this setup.
@@ -128,7 +130,7 @@ print("\n🎯 **Configuration Ready!**")
 print("Choose your approach below based on your needs.")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ---
 # # 🎯 **Choose Your Approach**
 #
@@ -141,7 +143,7 @@ print("Choose your approach below based on your needs.")
 # | 2-5 minutes | 10-30 minutes | 30-120 minutes | 2+ hours |
 #
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## 🔰 **Level 1: Beginner - Quick Start**
 #
 # **Perfect for**: Learning, testing, small analysis projects
@@ -234,7 +236,7 @@ beginner_results = results
 print(f"\n🎉 **Beginner Demo Complete!** Results stored in 'beginner_results'.")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## 📊 **Level 2: Intermediate - Sector Analysis**
 #
 # **Perfect for**: Targeted analysis, sector research, comparative studies
@@ -326,7 +328,7 @@ intermediate_results = sector_results
 print(f"\n💾 Results stored in 'intermediate_results' for further analysis.")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## 🚀 **Level 3: Advanced - Full Universe Discovery**
 #
 # **Perfect for**: Comprehensive research, market analysis, data science projects
@@ -475,7 +477,7 @@ else:
     print(f"\n💡 Execute the cell with EXECUTE_ADVANCED = True to run the fetch")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## ⚡ **Level 4: Enterprise - Parallel Processing**
 #
 # **Perfect for**: Production systems, time-critical analysis, large-scale operations
@@ -577,7 +579,7 @@ else:
 print(f"\n✅ **Enterprise Level Complete**")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ---
 # ## 📊 **Summary & Best Practices**
 #

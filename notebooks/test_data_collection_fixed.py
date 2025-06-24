@@ -1,7 +1,9 @@
 # ---
 # jupyter:
 #   jupytext:
+#     cell_metadata_filter: -all
 #     formats: ipynb,py:percent
+#     notebook_metadata_filter: all,-language_info,-toc,-latex_envs
 #     text_representation:
 #       extension: .py
 #       format_name: percent
@@ -13,13 +15,13 @@
 #     name: python3
 # ---
 
-# %% [markdown] tags=["papermill-error-cell-tag"]
+# %% [markdown]
 # <span style="color:red; font-family:Helvetica Neue, Helvetica, Arial, sans-serif; font-size:2em;">An Exception was encountered at '<a href="#papermill-error-cell">In [1]</a>'.</span>
 
-# %% [markdown] tags=["papermill-error-cell-tag"]
+# %% [markdown]
 # <span id="papermill-error-cell" style="color:red; font-family:Helvetica Neue, Helvetica, Arial, sans-serif; font-size:2em;">Execution using papermill encountered an exception here and stopped:</span>
 
-# %% papermill={"duration": 0.007915, "end_time": "2025-06-24T07:05:30.187450", "exception": true, "start_time": "2025-06-24T07:05:30.179535", "status": "failed"}
+# %%
 # Hong Kong Stock Data Collection
 
 This notebook demonstrates how to fetch and cache daily OHLCV data for Hong Kong stocks using Yahoo Finance. The data will be used for chart pattern recognition and model training.
@@ -33,13 +35,13 @@ This notebook demonstrates how to fetch and cache daily OHLCV data for Hong Kong
 - ✅ Data validation and preview
 
 
-# %% papermill={"duration": null, "end_time": null, "exception": null, "start_time": null, "status": "pending"}
+# %%
 ## Setup and Imports
 
 First, let's import the necessary libraries and our data fetching module.
 
 
-# %% papermill={"duration": null, "end_time": null, "exception": null, "start_time": null, "status": "pending"}
+# %%
 # Add the src directory to Python path
 import sys
 import os
@@ -68,13 +70,13 @@ print("✅ All imports successful!")
 print(f"📅 Current date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
 
-# %% papermill={"duration": null, "end_time": null, "exception": null, "start_time": null, "status": "pending"}
+# %%
 ## Step 1: Define Target Stocks
 
 Let's define some popular Hong Kong stocks to fetch data for. These are commonly traded stocks that should have good data availability.
 
 
-# %% papermill={"duration": null, "end_time": null, "exception": null, "start_time": null, "status": "pending"}
+# %%
 # Define target Hong Kong stocks
 target_tickers = [
     '6969.HK',  
@@ -96,16 +98,16 @@ for ticker in valid_tickers:
     print(f"  {ticker}: {stock_names.get(ticker, 'Unknown')}")
 
 
-# %% papermill={"duration": null, "end_time": null, "exception": null, "start_time": null, "status": "pending"}
+# %%
 valid_tickers
 
-# %% papermill={"duration": null, "end_time": null, "exception": null, "start_time": null, "status": "pending"}
+# %%
 ## Step 2: Set Date Range
 
 Define the date range for historical data. We'll fetch approximately 1 year of data for pattern recognition training.
 
 
-# %% papermill={"duration": null, "end_time": null, "exception": null, "start_time": null, "status": "pending"}
+# %%
 # Define date range (1 year of data)
 end_date = datetime.now().strftime('%Y-%m-%d')
 start_date = (datetime.now() - timedelta(days=365)).strftime('%Y-%m-%d')
@@ -122,25 +124,25 @@ expected_trading_days = int(total_days * 5/7 * 0.95)  # Rough estimate excluding
 print(f"   Expected trading days: ~{expected_trading_days}")
 
 
-# %% papermill={"duration": null, "end_time": null, "exception": null, "start_time": null, "status": "pending"}
+# %%
 ## Step 3: Check Existing Cache
 
 Before fetching new data, let's see what's already cached locally.
 
 
-# %% papermill={"duration": null, "end_time": null, "exception": null, "start_time": null, "status": "pending"}
+# %%
 # Check existing cached data
 print("📁 Current cache status:")
 list_cached_tickers()
 
 
-# %% papermill={"duration": null, "end_time": null, "exception": null, "start_time": null, "status": "pending"}
+# %%
 ## Step 4: Fetch Stock Data
 
 Now let's fetch the data. This will use intelligent caching - if data already exists, it will only fetch missing data.
 
 
-# %% papermill={"duration": null, "end_time": null, "exception": null, "start_time": null, "status": "pending"}
+# %%
 # Fetch stock data with caching
 print("🚀 Starting data collection...\n")
 
@@ -155,13 +157,13 @@ print(f"\n✅ Data collection completed!")
 print(f"📊 Successfully fetched data for {len(stock_data)} stocks")
 
 
-# %% papermill={"duration": null, "end_time": null, "exception": null, "start_time": null, "status": "pending"}
+# %%
 ## Step 5: Data Validation and Preview
 
 Let's validate the fetched data and get a preview of what we have.
 
 
-# %% papermill={"duration": null, "end_time": null, "exception": null, "start_time": null, "status": "pending"}
+# %%
 # Validate data structure and content
 print("🔍 Data validation:")
 print("="*50)

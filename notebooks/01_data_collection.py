@@ -1,7 +1,9 @@
 # ---
 # jupyter:
 #   jupytext:
+#     cell_metadata_filter: -all
 #     formats: ipynb,py:percent
+#     notebook_metadata_filter: all,-language_info,-toc,-latex_envs
 #     text_representation:
 #       extension: .py
 #       format_name: percent
@@ -13,53 +15,47 @@
 #     name: python3
 # ---
 
+# %% [markdown]
+# # Hong Kong Stock Data Collection
+#
+# This notebook demonstrates how to fetch and cache daily OHLCV data for Hong Kong stocks using Yahoo Finance. The data will be used for chart pattern recognition and model training.
+#
+# ## Features
+# - ✅ Fetch data from Yahoo Finance
+# - ✅ Intelligent local caching
+# - ✅ Incremental updates
+# - ✅ Progress tracking
+# - ✅ Error handling and recovery
+# - ✅ Data validation and preview
+
+
+# %% [markdown]
+# ## Setup and Imports
+#
+# First, let's import the necessary libraries and our data fetching module.
+
+
 # %%
-# Hong Kong Stock Data Collection
-
-This notebook demonstrates how to fetch and cache daily OHLCV data for Hong Kong stocks using Yahoo Finance. The data will be used for chart pattern recognition and model training.
-
-## Features
-- ✅ Fetch data from Yahoo Finance
-- ✅ Intelligent local caching
-- ✅ Incremental updates
-- ✅ Progress tracking
-- ✅ Error handling and recovery
-- ✅ Data validation and preview
-
-
-# %%
-## Setup and Imports
-
-First, let's import the necessary libraries and our data fetching module.
-
-
-# %%
-# Add the src directory to Python path
-import sys
-import os
-sys.path.append(os.path.join('..', 'src'))
-
-# Import our data fetching functions
-from data_fetcher import (
-    fetch_hk_stocks,
-    validate_tickers,
-    preview_cached_data,
-    list_cached_tickers
-)
-
-# Standard data science libraries
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
+# Use the shared setup utility
+from common_setup import setup_notebook, get_hk_stock_names, get_date_range, import_common_modules
 from datetime import datetime, timedelta
 
-# Configure display options
-pd.set_option('display.max_columns', None)
-pd.set_option('display.width', None)
-plt.style.use('seaborn-v0_8')
+# Set up notebook environment
+validation = setup_notebook()
+
+# Import our data fetching functions
+modules = import_common_modules()
+fetch_hk_stocks = modules['fetch_hk_stocks']
+validate_tickers = modules['validate_tickers']
+
+# Additional specific imports for this notebook
+from data_fetcher import preview_cached_data, list_cached_tickers
 
 print("✅ All imports successful!")
 print(f"📅 Current date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+
+# Get stock names dictionary
+stock_names = get_hk_stock_names()
 
 
 # %%
@@ -69,9 +65,11 @@ Let's define some popular Hong Kong stocks to fetch data for. These are commonly
 
 
 # %%
-# Define target Hong Kong stocks
+# Define target Hong Kong stocks - Popular, reliable tickers for demo
 target_tickers = [
-    '6969.HK',  
+    '0700.HK',  # Tencent - Tech leader
+    '0005.HK',  # HSBC - Major bank  
+    '0388.HK',  # HKEX - Local exchange
 ]
 
 # Validate ticker formats
@@ -142,7 +140,7 @@ stock_data = fetch_hk_stocks(
     tickers=valid_tickers,
     start_date=start_date,
     end_date=end_date,
-    force_refresh=True  # Set to True to ignore cache and fetch fresh data
+    force_refresh=False  # Use cached data when available for faster execution
 )
 
 print(f"\n✅ Data collection completed!")

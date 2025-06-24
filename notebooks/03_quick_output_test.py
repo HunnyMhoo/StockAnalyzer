@@ -1,7 +1,9 @@
 # ---
 # jupyter:
 #   jupytext:
+#     cell_metadata_filter: -all
 #     formats: ipynb,py:percent
+#     notebook_metadata_filter: all,-language_info,-toc,-latex_envs
 #     text_representation:
 #       extension: .py
 #       format_name: percent
@@ -13,7 +15,7 @@
 #     name: python3
 # ---
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # # 🧪 Quick Output Test - Fix Slow Notebook Issue
 #
 # This notebook tests the immediate output fix for Jupyter notebook cells that appear to "hang" without showing output.

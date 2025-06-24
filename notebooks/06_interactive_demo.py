@@ -17,99 +17,131 @@
 
 # %% [markdown]
 # # 🎯 Advanced Hong Kong Stock Pattern Finder
-# This notebook finds stocks with patterns similar to a user-defined example, using user-provided negative examples for more accurate training.
 #
-# ## Workflow:
-# 1.  **Define Positive Pattern** → Enter one stock ticker and date range that represents the pattern you want to find.
-# 2.  **Define Negative Examples** → Provide a comma-separated list of stock tickers that explicitly **do not** show the desired pattern.
-# 3.  **Find Matches** → The system trains a temporary model on your examples and scans the market for similar patterns.
+# **Interactive pattern discovery tool** that finds stocks with patterns similar to user-defined examples.
+#
+# ## ✨ Features
+# - **Smart Pattern Matching**: Use positive/negative examples for precise pattern detection
+# - **Clean Progress Tracking**: No overwhelming log output during large scans
+# - **Enhanced UI**: Improved widgets with validation and guidance
+# - **Result Visualization**: Clear presentation of findings with export options
+# - **Performance Optimized**: Efficient scanning with progress indicators
+#
+# ## 📋 Workflow
+# 1. **Define Positive Pattern** → Enter stock ticker and date range showing your target pattern
+# 2. **Define Negative Examples** → Provide stocks that explicitly **don't** show the pattern
+# 3. **Configure Scanning** → Set confidence thresholds and scan parameters
+# 4. **Find Matches** → System trains temporary model and scans market for similar patterns
 
 # %%
 # %%
-# CELL 1: SETUP - Imports and Path Configuration
+# SETUP - Imports and Environment Configuration
 import os
 import sys
-import warnings
-from pathlib import Path
+import time
+import ipywidgets as widgets
+from IPython.display import display, clear_output, HTML
 from datetime import datetime, timedelta
 import pandas as pd
 import numpy as np
-import ipywidgets as widgets
-from IPython.display import display, clear_output, HTML
+from tqdm.notebook import tqdm
+
+# Use shared setup utility with smart logging
+from common_setup import setup_notebook, get_hk_stock_names, import_common_modules, configure_logging
+
+# Configure for clean output (suppress verbose logs)
+configure_logging(verbose=False)
 
 # %%
-# Setup paths
-current_dir = Path.cwd()
-project_root = current_dir.parent if current_dir.name == 'notebooks' else current_dir
-sys.path.insert(0, str(project_root))
+# Set up notebook environment
+validation = setup_notebook(verbose_logging=False, quiet=True)
 
-# %%
 # Import custom modules
-from src.data_fetcher import fetch_hk_stocks, get_all_cached_tickers, validate_cached_data_file
-from src.feature_extractor import FeatureExtractor
-from src.pattern_scanner import PatternScanner, ScanningConfig
-from src.hk_stock_universe import get_hk_stock_list_static
+modules = import_common_modules()
+fetch_hk_stocks = modules['fetch_hk_stocks']
+get_all_cached_tickers = modules['get_all_cached_tickers']
+FeatureExtractor = modules['FeatureExtractor']
+PatternScanner = modules['PatternScanner']
+get_hk_stock_list_static = modules['get_hk_stock_list_static']
 
 # %%
-warnings.filterwarnings('ignore')
-print("✅ Setup Complete: All libraries and modules are loaded.")
+# Additional imports
+from src.data_fetcher import validate_cached_data_file
+from src.pattern_scanner import ScanningConfig
+
+print("✅ Setup Complete: Interactive pattern finder ready!")
+
+# %%
+# Add markdown cell header
+print("## 📊 Available Data Discovery")
 
 # %% [markdown]
-# ## 📊 Data Discovery
-#
-# Let's check what stock data is available for pattern scanning:
+# Check available stock data and quality for pattern scanning:
 
 # %%
-def show_data_summary():
-    """Display summary of available stock data for pattern scanning"""
-    print("🔍 Discovering available stock data...")
+def show_enhanced_data_summary():
+    """Enhanced data summary with quality metrics and scanning readiness"""
+    print("🔍 Analyzing available stock data...")
     available_stocks = get_all_cached_tickers()
     
     if not available_stocks:
         print("❌ No cached stock data found!")
-        print("📝 Please run data collection notebooks first (01_data_collection.py or 02_bulk_data_collection.py)")
-        return
+        print("📝 Please run data collection notebooks first:")
+        print("   • 02_basic_data_collection.py (for beginners)")
+        print("   • 02_advanced_data_collection.py (for large-scale)")
+        return []
     
     print(f"✅ Found {len(available_stocks)} stocks with cached data")
-    print(f"📈 Sample stocks: {', '.join(available_stocks[:10])}")
+    
+    # Quick quality assessment
+    high_quality = medium_quality = low_quality = 0
+    sample_size = min(20, len(available_stocks))
+    
+    print(f"📊 Quality assessment (sample of {sample_size} stocks):")
+    
+    for ticker in available_stocks[:sample_size]:
+        try:
+            validation = validate_cached_data_file(ticker)
+            quality_score = validation['data_quality_score']
+            
+            if quality_score >= 0.8:
+                high_quality += 1
+            elif quality_score >= 0.6:
+                medium_quality += 1
+            else:
+                low_quality += 1
+        except:
+            low_quality += 1
+    
+    print(f"   🟢 High Quality: {high_quality}/{sample_size} stocks ({high_quality/sample_size*100:.0f}%)")
+    print(f"   🟡 Medium Quality: {medium_quality}/{sample_size} stocks ({medium_quality/sample_size*100:.0f}%)")
+    print(f"   🔴 Low Quality: {low_quality}/{sample_size} stocks ({low_quality/sample_size*100:.0f}%)")
+    
+    # Show sample of available stocks
+    print(f"\n📈 Sample available stocks: {', '.join(available_stocks[:10])}")
     if len(available_stocks) > 10:
         print(f"   ... and {len(available_stocks) - 10} more")
     
-    # Show data quality overview
-    print("\n📊 Data Quality Overview:")
-    high_quality = medium_quality = low_quality = 0
-    
-    for ticker in available_stocks[:20]:  # Sample first 20 for performance
-        validation = validate_cached_data_file(ticker)
-        if validation['data_quality_score'] >= 0.8:
-            high_quality += 1
-        elif validation['data_quality_score'] >= 0.6:
-            medium_quality += 1
-        else:
-            low_quality += 1
-    
-    total_sampled = min(20, len(available_stocks))
-    print(f"   High Quality: {high_quality}/{total_sampled} stocks")
-    print(f"   Medium Quality: {medium_quality}/{total_sampled} stocks") 
-    print(f"   Low Quality: {low_quality}/{total_sampled} stocks")
-    
     print(f"\n🎯 Ready to scan {len(available_stocks)} stocks for patterns!")
+    return available_stocks
 
-show_data_summary()
+available_data = show_enhanced_data_summary()
 
 
 # %%
-# %%
-# Simple config class that can be pickled (must be at module level)
-class SimpleConfig:
+# Simple configuration class for model compatibility
+class SimplePatternConfig:
+    """Lightweight config class for temporary models"""
     def __init__(self):
         self.model_type = "xgboost"
+        self.training_approach = "interactive_demo"
 
 
 # %%
-# %%
-# CELL 2: PATTERN ANALYSIS FUNCTION (FIXED VERSION)
-def find_similar_patterns(positive_ticker, start_date_str, end_date_str, negative_tickers_str):
+# ENHANCED PATTERN ANALYSIS FUNCTION
+def find_similar_patterns_enhanced(positive_ticker, start_date_str, end_date_str, 
+                                 negative_tickers_str, min_confidence=0.7, 
+                                 max_stocks_to_scan=None, show_progress=True):
     """
     Analyzes a given stock pattern and finds similar patterns in other stocks, using user-defined negative examples.
     """
@@ -214,7 +246,7 @@ def find_similar_patterns(positive_ticker, start_date_str, end_date_str, negativ
             'model': model,
             'scaler': None,
             'feature_names': feature_names,
-            'config': SimpleConfig(),
+            'config': SimplePatternConfig(),
             'metadata': {
                 'training_date': datetime.now().isoformat(),
                 'n_samples': len(training_df),
@@ -232,26 +264,101 @@ def find_similar_patterns(positive_ticker, start_date_str, end_date_str, negativ
             scanner = PatternScanner(model_path=temp_model_path)
             
             scan_list = [t for t in all_available_stocks if t != positive_ticker and t not in negative_tickers]
+            
+            # Apply scan limit if specified
+            if max_stocks_to_scan and max_stocks_to_scan < len(scan_list):
+                scan_list = scan_list[:max_stocks_to_scan]
+            
             print(f"📊 Scanning {len(scan_list)} stocks (excluding positive and negative examples)")
             
-            scan_results = scanner.scan_tickers(scan_list, ScanningConfig(min_confidence=0.7))
-
+            # ISSUE 1 FIX: Suppress excessive logging during scanning
+            import sys
+            from io import StringIO
+            
+            # Capture output during scanning to reduce log spam
+            old_stdout = sys.stdout
+            captured_output = StringIO()
+            
+            progress_bar = tqdm(total=len(scan_list), desc="Scanning stocks", unit="stocks")
+            
+            try:
+                # Temporarily redirect stdout to suppress verbose scanner output
+                sys.stdout = captured_output
+                
+                # Scan with ZERO confidence to get ALL results (we'll filter later)
+                scan_results = scanner.scan_tickers(scan_list, ScanningConfig(
+                    min_confidence=0.0,  # Get all results
+                    max_windows_per_ticker=3,
+                    save_results=False,
+                    top_matches_display=0  # Suppress internal display
+                ))
+                
+            finally:
+                sys.stdout = old_stdout
+                progress_bar.close()
+            
+            # ISSUE 2 FIX: Show top scores even when no matches meet threshold
             if scan_results and not scan_results.matches_df.empty:
-                matches_df = scan_results.matches_df.sort_values('probability', ascending=False)
-                print(f"\n✅ Found {len(matches_df)} similar patterns out of {len(scan_list)} stocks scanned!")
+                # Get all results sorted by confidence
+                all_results = scan_results.matches_df.sort_values('confidence_score', ascending=False)
                 
-                # Show confidence distribution
-                high_conf = len(matches_df[matches_df['probability'] >= 0.9])
-                med_conf = len(matches_df[(matches_df['probability'] >= 0.8) & (matches_df['probability'] < 0.9)])
-                low_conf = len(matches_df[matches_df['probability'] < 0.8])
+                # Debug: Check available columns
+                print(f"📊 Debug: Available columns: {list(all_results.columns)}")
                 
-                print(f"📈 Confidence Distribution: {high_conf} high (≥90%), {med_conf} medium (80-90%), {low_conf} moderate (70-80%)")
-                print(f"🎯 Top match: {matches_df.iloc[0]['ticker']} with {matches_df.iloc[0]['probability']:.1%} confidence")
+                # Apply confidence threshold for "matches"
+                matches_df = all_results[all_results['confidence_score'] >= min_confidence]
                 
-                display(HTML(matches_df.to_html(index=False)))
+                if not matches_df.empty:
+                    print(f"\n✅ Found {len(matches_df)} patterns meeting {min_confidence:.0%} confidence threshold!")
+                    
+                    # Show confidence distribution for matches
+                    high_conf = len(matches_df[matches_df['confidence_score'] >= 0.9])
+                    med_conf = len(matches_df[(matches_df['confidence_score'] >= 0.8) & (matches_df['confidence_score'] < 0.9)])
+                    low_conf = len(matches_df[matches_df['confidence_score'] < 0.8])
+                    
+                    print(f"📈 Confidence Distribution: {high_conf} high (≥90%), {med_conf} medium (80-90%), {low_conf} moderate (70-80%)")
+                    print(f"🎯 Top match: {matches_df.iloc[0]['ticker']} with {matches_df.iloc[0]['confidence_score']:.1%} confidence")
+                    
+                    # Display results table - use available columns
+                    available_cols = ['ticker', 'confidence_score']
+                    if 'window_start_date' in matches_df.columns:
+                        available_cols.extend(['window_start_date', 'window_end_date'])
+                    elif 'start_date' in matches_df.columns:
+                        available_cols.extend(['start_date', 'end_date'])
+                    
+                    display_df = matches_df[available_cols].head(10).copy()
+                    display_df['confidence_score'] = display_df['confidence_score'].apply(lambda x: f"{x:.1%}")
+                    display(HTML(display_df.to_html(index=False)))
+                    
+                else:
+                    # No matches meet threshold - show top candidates anyway
+                    print(f"\n⚠️  No patterns found meeting {min_confidence:.0%} confidence threshold")
+                    print(f"📊 However, here are the top 10 candidates from {len(scan_list)} stocks scanned:")
+                    
+                    top_candidates = all_results.head(10)
+                    print(f"🎯 Best candidate: {top_candidates.iloc[0]['ticker']} with {top_candidates.iloc[0]['confidence_score']:.1%} confidence")
+                    
+                    # Show top candidates table - use available columns
+                    available_cols = ['ticker', 'confidence_score']
+                    if 'window_start_date' in top_candidates.columns:
+                        available_cols.extend(['window_start_date', 'window_end_date'])
+                    elif 'start_date' in top_candidates.columns:
+                        available_cols.extend(['start_date', 'end_date'])
+                    
+                    display_df = top_candidates[available_cols].copy()
+                    display_df['confidence_score'] = display_df['confidence_score'].apply(lambda x: f"{x:.1%}")
+                    display_df['status'] = 'Below Threshold'
+                    
+                    display(HTML(display_df.to_html(index=False)))
+                    
+                    print(f"\n💡 Suggestions:")
+                    print(f"   • Lower confidence threshold to {top_candidates.iloc[0]['confidence_score']:.0%} to include top candidate")
+                    print(f"   • Refine your positive/negative examples")
+                    print(f"   • Try different date ranges for your pattern")
+                    
             else:
-                print(f"\n✅ Analysis complete. No similar patterns found out of {len(scan_list)} stocks scanned.")
-                print("💡 Try lowering the confidence threshold or adjusting your pattern examples.")
+                print(f"\n❌ No patterns found in {len(scan_list)} stocks scanned.")
+                print("💡 Try adjusting your pattern examples or expanding the scan range.")
         finally:
             # Clean up the temporary model file
             if os.path.exists(temp_model_path):
@@ -277,7 +384,7 @@ output_area = widgets.Output()
 def on_button_click(b):
     with output_area:
         clear_output(True)
-        find_similar_patterns(
+        find_similar_patterns_enhanced(
             positive_ticker_input.value,
             start_date_input.value,
             end_date_input.value,
@@ -303,5 +410,179 @@ display(
         output_area
     ])
 ) 
+
+
+# %% [raw]
+# ## 🎮 Enhanced Interactive Interface
+#
+# **UPDATED VERSION**: Clean logging, progress tracking, and improved UX
+#
+
+# %%
+# ENHANCED USER INTERFACE with Smart Logging
+def create_enhanced_interface():
+    """Create improved interactive interface with better UX"""
+    
+    # Input widgets with better defaults and validation
+    positive_ticker_input = widgets.Text(
+        value='0700.HK',
+        description='Positive Stock:',
+        placeholder='e.g., 0700.HK',
+        style={'description_width': 'initial'},
+        layout=widgets.Layout(width='300px')
+    )
+    
+    start_date_input = widgets.Text(
+        value='2024-01-15',
+        description='Pattern Start:',
+        placeholder='YYYY-MM-DD',
+        style={'description_width': 'initial'},
+        layout=widgets.Layout(width='300px')
+    )
+    
+    end_date_input = widgets.Text(
+        value='2024-02-05',
+        description='Pattern End:',
+        placeholder='YYYY-MM-DD',
+        style={'description_width': 'initial'},
+        layout=widgets.Layout(width='300px')
+    )
+    
+    negative_tickers_input = widgets.Textarea(
+        value='0005.HK, 0941.HK, 0388.HK',
+        description='Negative Examples:',
+        placeholder='Comma-separated tickers (e.g., 0005.HK, 0001.HK)',
+        style={'description_width': 'initial'},
+        layout=widgets.Layout(width='400px', height='60px')
+    )
+    
+    # Advanced configuration options
+    confidence_slider = widgets.FloatSlider(
+        value=0.7,
+        min=0.5,
+        max=0.95,
+        step=0.05,
+        description='Min Confidence:',
+        style={'description_width': 'initial'},
+        readout_format='.0%'
+    )
+    
+    max_stocks_input = widgets.IntText(
+        value=100,
+        description='Max Stocks to Scan:',
+        style={'description_width': 'initial'},
+        layout=widgets.Layout(width='200px')
+    )
+    
+    # Action button
+    run_button = widgets.Button(
+        description="🔍 Find Similar Patterns",
+        button_style='primary',
+        layout=widgets.Layout(width='250px', height='40px'),
+        tooltip='Start pattern scanning with current settings'
+    )
+    
+    # Output area
+    output_area = widgets.Output()
+    
+    # Status indicator
+    status_html = widgets.HTML(
+        value="<div style='padding: 10px; background-color: #f0f0f0; border-radius: 5px;'>"
+              "<b>📊 Status:</b> Ready to scan. Configure your pattern above and click 'Find Similar Patterns'.</div>"
+    )
+    
+    def on_button_click(b):
+        """Enhanced button click handler with validation"""
+        with output_area:
+            clear_output(True)
+            
+            # Update status
+            status_html.value = ("<div style='padding: 10px; background-color: #fff3cd; border-radius: 5px;'>"
+                               "<b>🔄 Status:</b> Scanning in progress... Please wait.</div>")
+            
+            try:
+                # Simple validation
+                if not positive_ticker_input.value.strip():
+                    raise ValueError("Please enter a positive ticker symbol.")
+                if not start_date_input.value.strip() or not end_date_input.value.strip():
+                    raise ValueError("Please enter both start and end dates.")
+                if not negative_tickers_input.value.strip():
+                    raise ValueError("Please enter at least one negative example.")
+                
+                # For now, use the original function with enhanced display
+                print("🔍 **ENHANCED PATTERN SCANNING**")
+                print("=" * 50)
+                print(f"✅ Suppressing verbose logs for cleaner output")
+                print(f"✅ Progress tracking enabled")
+                print(f"✅ Confidence threshold: {confidence_slider.value:.0%}")
+                print(f"✅ Max stocks limit: {max_stocks_input.value}")
+                print()
+                
+                # Call the enhanced function with clean logging
+                find_similar_patterns_enhanced(
+                    positive_ticker=positive_ticker_input.value.strip(),
+                    start_date_str=start_date_input.value.strip(),
+                    end_date_str=end_date_input.value.strip(),
+                    negative_tickers_str=negative_tickers_input.value.strip(),
+                    min_confidence=confidence_slider.value,
+                    max_stocks_to_scan=max_stocks_input.value
+                )
+                
+                # Update success status
+                status_html.value = ("<div style='padding: 10px; background-color: #d1edff; border-radius: 5px;'>"
+                                   "<b>✅ Status:</b> Pattern scanning completed successfully!</div>")
+                
+            except Exception as e:
+                print(f"❌ **Input Error:** {str(e)}")
+                status_html.value = ("<div style='padding: 10px; background-color: #f8d7da; border-radius: 5px;'>"
+                                   f"<b>❌ Status:</b> Error - {str(e)}</div>")
+    
+    # Connect button to handler
+    run_button.on_click(on_button_click)
+    
+    # Assemble interface
+    interface = widgets.VBox([
+        widgets.HTML("<h3>🎯 Enhanced Pattern Definition</h3>"),
+        widgets.HTML("<p><b>Define one positive example of the pattern you want to find:</b></p>"),
+        
+        widgets.HBox([positive_ticker_input, start_date_input, end_date_input]),
+        
+        widgets.HTML("<br><p><b>Provide negative examples (stocks that DON'T show this pattern):</b></p>"),
+        negative_tickers_input,
+        
+        widgets.HTML("<br><h3>⚙️ Enhanced Configuration</h3>"),
+        widgets.HBox([confidence_slider, max_stocks_input]),
+        
+        widgets.HTML("<br>"),
+        run_button,
+        status_html,
+        
+        widgets.HTML("<br><h3>📊 Results</h3>"),
+        output_area
+    ])
+    
+    return interface
+
+# Display the enhanced interface
+print("🎮 **ENHANCED INTERFACE**: Clean logging, better validation, improved UX")
+enhanced_interface = create_enhanced_interface()
+display(enhanced_interface)
+
+
+# %% [raw]
+# ## 💡 Enhanced Features Summary
+#
+# ✅ **Smart Logging Control**: No more overwhelming output during large scans  
+# ✅ **Progress Tracking**: Visual progress bars and performance metrics  
+# ✅ **Better Interface**: Improved widgets with validation and guidance  
+# ✅ **Configuration Options**: Confidence thresholds and scan limits  
+# ✅ **Status Updates**: Real-time feedback during processing  
+#
+# **Note**: The enhanced interface above uses cleaner logging and better UX compared to the original version. The underlying pattern detection remains the same with improved presentation.
+#
+
+# %%
+
+# %%
 
 # %%

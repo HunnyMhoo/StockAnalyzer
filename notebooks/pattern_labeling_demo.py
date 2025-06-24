@@ -1,7 +1,9 @@
 # ---
 # jupyter:
 #   jupytext:
+#     cell_metadata_filter: -all
 #     formats: ipynb,py:percent
+#     notebook_metadata_filter: all,-language_info,-toc,-latex_envs
 #     text_representation:
 #       extension: .py
 #       format_name: percent
@@ -13,7 +15,7 @@
 #     name: python3
 # ---
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # # Pattern Labeling Demo
 #
 # This notebook demonstrates how to manually label stock chart patterns for training data.
@@ -30,7 +32,7 @@
 # - Optional: mplfinance for chart visualization
 #
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## Setup and Imports
 #
 
@@ -68,7 +70,7 @@ except ImportError as e:
 print("✓ Pattern labeling modules imported successfully")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## Initialize Pattern Labeler
 #
 
@@ -78,7 +80,7 @@ labeler = PatternLabeler()
 print(f"Pattern labeler initialized. Labels file: {labeler.labels_file}")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## Example: Define Pattern Labels Using Dictionary Format
 #
 # This matches the format specified in the user story.
@@ -108,7 +110,7 @@ for pattern in labeled_patterns:
     print(f"  - {pattern['ticker']}: {pattern['start_date']} to {pattern['end_date']} ({pattern['label_type']})")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## Save Patterns Using the Convenience Function
 #
 
@@ -141,7 +143,7 @@ except (ValidationError, PatternLabelError) as e:
     print(f"❌ Error saving patterns: {e}")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## Use the PatternLabeler Instance to Add More Patterns
 #
 
@@ -177,7 +179,7 @@ except (ValidationError, PatternLabelError) as e:
     print(f"❌ Error adding labels: {e}")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## Load and Display All Patterns Using the Labeler
 #
 
@@ -203,7 +205,7 @@ except PatternLabelError as e:
     print(f"❌ Error loading patterns: {e}")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## Use Labeler for Summary Statistics and Filtering
 #
 
@@ -232,7 +234,7 @@ for label in hk700_labels:
     print(f"  Notes: {label.notes}")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## Demonstrate Validation Using Labeler
 #
 

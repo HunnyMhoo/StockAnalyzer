@@ -1,7 +1,9 @@
 # ---
 # jupyter:
 #   jupytext:
+#     cell_metadata_filter: -all
 #     formats: ipynb,py:percent
+#     notebook_metadata_filter: all,-language_info,-toc,-latex_envs
 #     text_representation:
 #       extension: .py
 #       format_name: percent
@@ -13,7 +15,7 @@
 #     name: python3
 # ---
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # # Pattern Scanning Demo - User Story 1.5
 #
 # This notebook demonstrates the pattern scanning functionality that applies trained models to detect trading patterns across multiple HK stocks.

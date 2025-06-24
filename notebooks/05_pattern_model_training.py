@@ -1,7 +1,9 @@
 # ---
 # jupyter:
 #   jupytext:
+#     cell_metadata_filter: -all
 #     formats: ipynb,py:percent
+#     notebook_metadata_filter: all,-language_info,-toc,-latex_envs
 #     text_representation:
 #       extension: .py
 #       format_name: percent
@@ -9,7 +11,7 @@
 #       jupytext_version: 1.17.2
 # ---
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # # Pattern Model Training Notebook (Fixed)
 #
 # This notebook provides an interactive interface for training machine learning models to detect trading patterns.
@@ -64,7 +66,7 @@ except ImportError as e:
     print("On macOS, also run: brew install libomp")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## Step 1: Data Loading and Exploration
 #
 # Let's start by loading and examining our labeled feature data.
@@ -113,7 +115,7 @@ else:
     print(df.head())
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## Step 2: Training Configuration
 #
 # Define different training configurations for various model types and hyperparameters.
@@ -161,7 +163,7 @@ selected_configs = ['xgboost_default', 'random_forest_default']
 print(f"\n🎯 Selected configurations: {selected_configs}")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## Step 3: Model Training
 #
 # Train the selected models and collect results.
@@ -210,7 +212,7 @@ for config_name in selected_configs:
 print(f"\n✅ Training completed for {len(training_results)} models")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## Step 4: Model Evaluation and Comparison
 #
 # Compare the trained models and analyze their performance.
@@ -276,7 +278,7 @@ else:
     print("❌ No training results available for comparison")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## Step 5: Feature Importance Analysis
 #
 # Analyze which features are most important for pattern detection.

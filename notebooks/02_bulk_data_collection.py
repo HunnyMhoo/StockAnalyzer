@@ -1,7 +1,9 @@
 # ---
 # jupyter:
 #   jupytext:
+#     cell_metadata_filter: -all
 #     formats: ipynb,py:percent
+#     notebook_metadata_filter: all,-language_info,-toc,-latex_envs
 #     text_representation:
 #       extension: .py
 #       format_name: percent
@@ -13,7 +15,7 @@
 #     name: python3
 # ---
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # # Bulk Hong Kong Stock Data Collection
 #
 # This notebook demonstrates how to fetch data for **ALL Hong Kong stocks** efficiently using various approaches:
@@ -38,7 +40,7 @@
 # Each cell in this notebook can be run independently after the setup cells (1-3).
 #
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## 🔧 Setup - Run These Cells First
 #
 # **Important**: Run cells 1-3 before running any demonstration cells.
@@ -103,7 +105,7 @@ print(f"📊 Expected trading days: ~65")
 print("🚀 Setup complete! You can now run any demonstration cell independently.")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## 📊 Method 1: Explore Stock Categories
 #
 # **Objective**: Understand available HK stock categories and get familiar with the data structure.
@@ -135,7 +137,7 @@ print(f"🏦 Finance sector: {len(finance_stocks)} stocks")
 print("\n✅ Method 1 Complete: Stock categories explored!")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## ⚡ Method 2: Bulk Fetch with Smart Batching
 #
 # **Objective**: Fetch multiple stocks efficiently using batch processing and rate limiting.
@@ -175,7 +177,7 @@ if demo_stocks:
 print("\n✅ Method 2 Complete: Bulk fetching demonstrated!")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## 🏢 Method 3: Sector-Specific Bulk Fetching
 #
 # **Objective**: Fetch stocks from specific sectors (Tech, Finance, etc.) for targeted analysis.
@@ -220,7 +222,7 @@ print(f"   🏦 Finance stocks fetched: {len(finance_data)}")
 print("\n✅ Method 3 Complete: Sector-specific fetching demonstrated!")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## 🇭🇰 Method 4: Discover ALL Hong Kong Stocks
 #
 # **Objective**: Discover and analyze the complete HK stock universe (discovery only, no data fetching).
@@ -273,7 +275,7 @@ print(f"💡 To discover the full universe, increase max_tickers parameter.")
 print("\n✅ Method 4 Complete: Stock universe discovery demonstrated!")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## 🚀 Method 5: Fetch ALL Hong Kong Stocks (Full Universe)
 #
 # **Objective**: Actually fetch stock data for ALL discovered HK stocks with progress tracking.
@@ -412,7 +414,7 @@ print("\n✅ Method 5 Complete: Comprehensive HK market fetch capability deliver
 
 # %%
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## 💾 Method 6: Data Management & Saving
 #
 # **Objective**: Save and organize bulk-fetched data systematically for future analysis.
@@ -474,7 +476,7 @@ else:
 print("\n✅ Method 6 Complete: Data management demonstrated!")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## 🛡️ Method 7: Error Handling & Retry Logic
 #
 # **Objective**: Demonstrate robust error handling with retry logic for production-ready bulk fetching.
@@ -554,7 +556,7 @@ print("   6. ✅ Provide recovery mechanisms")
 print("\n✅ Method 7 Complete: Error handling demonstrated!")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## ⚡ Method 8: Parallel Processing (Advanced)
 #
 # **Objective**: Demonstrate parallel processing with threading for faster bulk fetching.
@@ -628,7 +630,7 @@ print("   6. 🚨 Have fallback to sequential processing")
 print("\n✅ Method 8 Complete: Parallel processing demonstrated!")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## 📊 Summary & Best Practices
 #
 # **Key takeaways and recommendations from all methods demonstrated above.**
@@ -711,10 +713,10 @@ print("   • Scale up gradually from small to large datasets")
 print("   • Implement production safeguards for real applications")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 #
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 #
 #
 
@@ -885,7 +887,7 @@ def fetch_single_stock_with_delay(stock_symbol):
 print("✅ Helper functions defined!")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## Method 1: Fetch Major HK Stocks by Sector
 #
 # Start with curated lists of major Hong Kong stocks organized by sector. This is the most reliable approach.
@@ -909,13 +911,13 @@ print(f"📈 Total unique major stocks: {len(all_major_stocks)}")
 print(f"🔍 Sample tickers: {all_major_stocks[:10]}")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## Method 2: Bulk Fetch with Smart Batching
 #
 # Now let's fetch data for all major stocks using intelligent batching and rate limiting.
 #
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # len(all_major_stocks)
 
 # %%
@@ -979,7 +981,7 @@ finance_data = fetch_hk_stocks_bulk(
 print(f"\n📈 Successfully fetched data for {len(finance_data)} finance stocks")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 #
 #
 
@@ -1287,7 +1289,7 @@ if demo_stocks:
     print(f"\n💾 Summary saved to: {summary_file}")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 #
 #
 
@@ -1328,7 +1330,7 @@ print("\n⚠️  **Note**: Always test rate limits before using parallel process
 
 # %%
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## Method 6: Error Handling & Recovery
 #
 # Robust error handling is crucial when fetching large amounts of data.
@@ -1393,7 +1395,7 @@ if failed_list:
     print(f"📝 Failed stocks: {failed_list}")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## 📊 Summary & Best Practices
 #
 # ### 🎯 Key Takeaways

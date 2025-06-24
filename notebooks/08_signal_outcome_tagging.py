@@ -1,7 +1,9 @@
 # ---
 # jupyter:
 #   jupytext:
+#     cell_metadata_filter: -all
 #     formats: ipynb,py:percent
+#     notebook_metadata_filter: all,-language_info,-toc,-latex_envs
 #     text_representation:
 #       extension: .py
 #       format_name: percent
@@ -13,7 +15,7 @@
 #     name: python3
 # ---
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # # Signal Outcome Tagging Notebook
 # ## User Story 2.2 - Tag Signal Outcome (Success or Failure)
 #
@@ -61,7 +63,7 @@ print(f"   Valid outcomes: {', '.join(VALID_OUTCOMES)}")
 print("   Ready for pattern match feedback collection!")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## 🔍 Step 1: Discover Available Match Files
 #
 # First, let's check what pattern match files are available for tagging.
@@ -106,7 +108,7 @@ except SignalOutcomeError as e:
     print("   Please ensure the signals directory exists and contains match files.")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## 📂 Step 2: Load and Review Match File
 #
 # Load the most recent match file and review its contents.
@@ -155,7 +157,7 @@ except SignalOutcomeError as e:
     file_path = None
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## 🏷️ Step 3: Individual Match Tagging
 #
 # Tag individual matches with outcomes and feedback notes.
@@ -217,7 +219,7 @@ else:
     print("⚠️  No matches loaded. Please run the previous cell to load match data.")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## 💾 Step 4: Save Tagged Matches
 #
 # Save your tagged matches to a labeled file for future reference and analysis.
@@ -255,7 +257,7 @@ else:
     print("⚠️  No matches to save. Please load and tag matches first.")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## 📈 Step 5: Feedback Analysis and Review
 #
 # Analyze your tagging results to understand model performance across different confidence bands.

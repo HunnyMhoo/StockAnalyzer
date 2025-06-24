@@ -1,7 +1,9 @@
 # ---
 # jupyter:
 #   jupytext:
+#     cell_metadata_filter: -all
 #     formats: ipynb,py:percent
+#     notebook_metadata_filter: all,-language_info,-toc,-latex_envs
 #     text_representation:
 #       extension: .py
 #       format_name: percent
@@ -13,7 +15,7 @@
 #     name: python3
 # ---
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # # 📊 Pattern Match Visualization
 #
 # This notebook demonstrates how to visualize pattern matches detected by the ML models.
@@ -34,7 +36,7 @@
 # - Chart saving functionality
 #
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## 1. Setup and Imports
 #
 
@@ -96,7 +98,7 @@ print("✓ All imports completed")
 print(f"✓ Working directory: {os.getcwd()}")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## 2. Resource Validation
 #
 
@@ -149,7 +151,7 @@ else:
     print("⚠️ Missing required files. Please run pattern scanning first.")
 
 
-# %% [raw] vscode={"languageId": "raw"}
+# %% [raw]
 # ## 3. Single Match Visualization Demo
 #
 # Demonstrate visualization of individual pattern matches with all required overlays.
