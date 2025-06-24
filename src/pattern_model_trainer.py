@@ -163,6 +163,28 @@ class PatternModelTrainer:
                 f"cv_folds must be >= 2, got: {self.config.cv_folds}"
             )
     
+    def _train_model_instance(self, model: Any, X_train: pd.DataFrame, y_train: pd.Series) -> Any:
+        """Helper to fit a model instance, created to be called by other methods."""
+        try:
+            if self.config.model_type == "xgboost" and XGBOOST_AVAILABLE:
+                print("🚀 Training xgboost model...")
+            model.fit(X_train, y_train)
+            return model
+        except Exception as e:
+            raise ModelTrainingError(f"Model fitting failed: {e}")
+
+    def train_model(self, features_df: pd.DataFrame, labels: pd.Series) -> Any:
+        """
+        Train a model directly on a provided DataFrame and labels.
+        This is a convenience wrapper for interactive use.
+        """
+        # This method is for direct, in-memory training. It doesn't use the full pipeline.
+        if not all(features_df.dtypes.apply(pd.api.types.is_numeric_dtype)):
+            raise ModelTrainingError("All columns in features_df must be numeric.")
+        
+        model = self.create_model()
+        return self._train_model_instance(model, features_df, labels)
+    
     def load_and_validate_data(self) -> pd.DataFrame:
         """
         Load and validate the labeled features dataset.
@@ -368,34 +390,6 @@ class PatternModelTrainer:
         else:
             raise ModelTrainingError(f"Unsupported model type: {self.config.model_type}")
     
-    def train_model(self, 
-                    X_train: pd.DataFrame, 
-                    y_train: pd.Series) -> Any:
-        """
-        Train the model on the prepared data.
-        
-        Args:
-            X_train: Training features
-            y_train: Training labels
-            
-        Returns:
-            Trained model instance
-        """
-        print(f"🚀 Training {self.config.model_type} model...")
-        
-        model = self.create_model()
-        start_time = datetime.now()
-        
-        try:
-            model.fit(X_train, y_train)
-            training_time = (datetime.now() - start_time).total_seconds()
-            
-            print(f"✓ Model training completed in {training_time:.2f} seconds")
-            return model
-            
-        except Exception as e:
-            raise ModelTrainingError(f"Model training failed: {e}")
-    
     def evaluate_model(self, 
                        model: Any, 
                        X_train: pd.DataFrame, 
@@ -584,9 +578,6 @@ class PatternModelTrainer:
     def train(self) -> TrainingResults:
         """
         Execute the complete training pipeline.
-        
-        Returns:
-            TrainingResults object with all training outcomes
         """
         start_time = datetime.now()
         
@@ -609,21 +600,22 @@ class PatternModelTrainer:
             )
             
             # Train model
-            model = self.train_model(X_train_processed, y_train_processed)
+            model = self.create_model()
+            model = self._train_model_instance(model, X_train_processed, y_train_processed)
             
             # Evaluate model
+            training_time = (datetime.now() - start_time).total_seconds()
             train_scores, test_scores = self.evaluate_model(
                 model, X_train_processed, y_train_processed, X_test_processed, y_test
             )
             
             # Cross-validation
-            cv_scores = self.perform_cross_validation(model, X_train_processed, y_train_processed)
+            cv_scores = self.perform_cross_validation(model, X_train_processed, y_train_processed) if self.config.use_cross_validation else None
             
             # Feature importance
             feature_importance = self.extract_feature_importance(model, list(features.columns))
             
             # Prepare metadata
-            training_time = (datetime.now() - start_time).total_seconds()
             metadata = {
                 'training_date': datetime.now().isoformat(),
                 'training_time_seconds': training_time,
@@ -634,7 +626,7 @@ class PatternModelTrainer:
             }
             
             # Save model
-            model_path = self.save_model(model, scaler, list(features.columns), metadata)
+            model_path = self.save_model(model, scaler, list(features.columns), metadata) if self.config.save_model else None
             
             print("=" * 50)
             print("✅ Training Pipeline Completed Successfully!")

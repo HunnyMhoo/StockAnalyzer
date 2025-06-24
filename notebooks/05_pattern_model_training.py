@@ -1,19 +1,33 @@
-# Pattern Model Training Notebook (Fixed)
+# ---
+# jupyter:
+#   jupytext:
+#     formats: ipynb,py:percent
+#     text_representation:
+#       extension: .py
+#       format_name: percent
+#       format_version: '1.3'
+#       jupytext_version: 1.17.2
+# ---
 
-This notebook provides an interactive interface for training machine learning models to detect trading patterns.
+# %% [raw] vscode={"languageId": "raw"}
+# # Pattern Model Training Notebook (Fixed)
+#
+# This notebook provides an interactive interface for training machine learning models to detect trading patterns.
+#
+# ## Overview
+# - Load and validate labeled feature data
+# - Train multiple model types (XGBoost, Random Forest)
+# - Evaluate model performance with comprehensive metrics
+# - Compare models and select the best performer
+# - Generate visualizations and reports
+#
+# ## Prerequisites
+# - Labeled features must be available in `../features/labeled_features.csv`
+# - Ensure all required packages are installed (see requirements.txt)
+# - On macOS, make sure you have libomp installed: `brew install libomp`
+#
 
-## Overview
-- Load and validate labeled feature data
-- Train multiple model types (XGBoost, Random Forest)
-- Evaluate model performance with comprehensive metrics
-- Compare models and select the best performer
-- Generate visualizations and reports
-
-## Prerequisites
-- Labeled features must be available in `../features/labeled_features.csv`
-- Ensure all required packages are installed (see requirements.txt)
-- On macOS, make sure you have libomp installed: `brew install libomp`
-
+# %%
 # Import required libraries
 import sys
 import os
@@ -49,10 +63,14 @@ except ImportError as e:
     print("Install with: pip install xgboost")
     print("On macOS, also run: brew install libomp")
 
-## Step 1: Data Loading and Exploration
 
-Let's start by loading and examining our labeled feature data.
+# %% [raw] vscode={"languageId": "raw"}
+# ## Step 1: Data Loading and Exploration
+#
+# Let's start by loading and examining our labeled feature data.
+#
 
+# %%
 # Define data paths
 features_path = "../features/labeled_features.csv"
 models_dir = "../models"
@@ -94,10 +112,14 @@ else:
     print(f"\n📊 First few rows:")
     print(df.head())
 
-## Step 2: Training Configuration
 
-Define different training configurations for various model types and hyperparameters.
+# %% [raw] vscode={"languageId": "raw"}
+# ## Step 2: Training Configuration
+#
+# Define different training configurations for various model types and hyperparameters.
+#
 
+# %%
 # Define training configurations with correct parameter names
 configs = {
     'xgboost_default': TrainingConfig(
@@ -138,10 +160,14 @@ for name, config in configs.items():
 selected_configs = ['xgboost_default', 'random_forest_default']
 print(f"\n🎯 Selected configurations: {selected_configs}")
 
-## Step 3: Model Training
 
-Train the selected models and collect results.
+# %% [raw] vscode={"languageId": "raw"}
+# ## Step 3: Model Training
+#
+# Train the selected models and collect results.
+#
 
+# %%
 # Dictionary to store training results
 training_results = {}
 
@@ -183,10 +209,14 @@ for config_name in selected_configs:
         
 print(f"\n✅ Training completed for {len(training_results)} models")
 
-## Step 4: Model Evaluation and Comparison
 
-Compare the trained models and analyze their performance.
+# %% [raw] vscode={"languageId": "raw"}
+# ## Step 4: Model Evaluation and Comparison
+#
+# Compare the trained models and analyze their performance.
+#
 
+# %%
 # Create comparison summary
 if training_results:
     print("🏆 MODEL COMPARISON SUMMARY")
@@ -245,10 +275,14 @@ if training_results:
 else:
     print("❌ No training results available for comparison")
 
-## Step 5: Feature Importance Analysis
 
-Analyze which features are most important for pattern detection.
+# %% [raw] vscode={"languageId": "raw"}
+# ## Step 5: Feature Importance Analysis
+#
+# Analyze which features are most important for pattern detection.
+#
 
+# %%
 # Analyze feature importance for each model
 for config_name, results in training_results.items():
     if results.feature_importance is not None and not results.feature_importance.empty:
@@ -274,6 +308,7 @@ for config_name, results in training_results.items():
 print("\n🎉 Pattern model training and analysis completed!")
 
 
+# %%
 # Quick test of the training results to verify they exist
 print("🔍 Current Training Results:")
 print(f"Number of trained models: {len(training_results)}")
@@ -291,4 +326,4 @@ for name, results in training_results.items():
 print("\n✅ Both models trained successfully! The KeyError was just a display issue, not a training failure.")
 
 
-
+# %%

@@ -81,4 +81,117 @@ The improvement in repository efficiency:
 
 ---
 
-*This workflow improves code review quality for our Hong Kong stock pattern recognition algorithms while maintaining the rich notebook development experience.* 
+*This workflow improves code review quality for our Hong Kong stock pattern recognition algorithms while maintaining the rich notebook development experience.*
+
+# Notebook Workflow Documentation
+
+This directory contains Jupyter notebooks that demonstrate the complete StockAnalyzer workflow for Hong Kong stock pattern recognition.
+
+## 📚 Available Notebooks
+
+### Core Analysis Workflow
+1. **[01_data_collection.ipynb](01_data_collection.ipynb)** - Data fetching and caching for HK stocks
+2. **[02_bulk_data_collection_improved.ipynb](02_bulk_data_collection_improved.ipynb)** - Bulk data collection optimization
+3. **[04_feature_extraction.ipynb](04_feature_extraction.ipynb)** - Technical indicator feature extraction
+4. **[05_pattern_model_training.ipynb](05_pattern_model_training.ipynb)** - ML model training and evaluation
+5. **[06_pattern_scanning.ipynb](06_pattern_scanning.ipynb)** - Pattern detection and scanning
+
+### Interactive Demo
+6. **[06_interactive_demo.ipynb](06_interactive_demo.ipynb)** ⭐ **NEW** - Complete end-to-end interactive workflow
+
+### Visualization & Analysis
+7. **[07_pattern_match_visualization.ipynb](07_pattern_match_visualization.ipynb)** - Pattern visualization
+8. **[08_signal_outcome_tagging.ipynb](08_signal_outcome_tagging.ipynb)** - Signal outcome analysis
+
+## 🎯 Interactive Demo Features
+
+The **06_interactive_demo.ipynb** notebook provides a comprehensive, interactive demonstration of the entire StockAnalyzer workflow:
+
+### ✅ Key Features:
+- **Papermill-compatible** for CI automation
+- **Interactive widgets** for real-time parameter adjustment
+- **Pattern detection** using "bull trend → dip → false resistance break" logic
+- **Feature extraction** with 18 specialized technical indicators
+- **Model training** using GradientBoostingClassifier
+- **Interactive visualizations** with Plotly charts
+- **Professional dashboard** with KPIs and performance metrics
+- **Run Again functionality** for workflow re-execution
+
+### 🚀 Quick Start:
+```bash
+# Open the interactive demo
+jupyter notebook 06_interactive_demo.ipynb
+
+# Or run with Papermill for CI
+papermill 06_interactive_demo.ipynb output.ipynb -p QUICK_MODE True
+```
+
+### 📊 Workflow Steps:
+1. **Parameter Configuration** - Configure analysis parameters via widgets
+2. **Ticker Tagging** - Detect preferred patterns in selected stocks
+3. **Feature Extraction** - Extract technical indicators for ML training
+4. **Model Training** - Train pattern detection classifier
+5. **Interactive Dashboard** - View results with charts and KPIs
+
+### 🎛️ Interactive Controls:
+- **Ticker Selection**: Multi-select from HK blue chips
+- **Lookback Window**: 30-730 days (slider)
+- **Model Threshold**: 0.50-0.95 confidence (slider)
+- **Quick Mode**: Enable for CI smoke testing
+
+### 📈 Outputs:
+- `data/tagged_tickers.csv` - Pattern detection results
+- `data/features/interactive_demo_features.csv` - Extracted features
+- `models/latest.joblib` - Trained pattern detection model
+- Interactive charts and performance dashboards
+
+## 🔧 Technical Requirements
+
+All notebooks require:
+- Python 3.11+
+- Libraries: pandas ≥ 2.0, yfinance, scikit-learn, plotly, ipywidgets, joblib, tqdm
+- StockAnalyzer package (local src/ directory)
+
+### Additional for Interactive Demo:
+- ipywidgets for interactive controls
+- plotly for visualization
+- Papermill for CI integration
+
+## 🏗️ Development Workflow
+
+### Running Individual Notebooks:
+```bash
+cd notebooks/
+jupyter notebook <notebook_name>.ipynb
+```
+
+### Running via Papermill (CI):
+```bash
+# Interactive demo with custom parameters
+papermill 06_interactive_demo.ipynb output.ipynb \
+  -p SELECTED_TICKERS '["0700.HK", "0005.HK"]' \
+  -p QUICK_MODE True \
+  -p MODEL_THRESHOLD 0.75
+```
+
+### Paired .py Files:
+The interactive demo includes a paired `.py` file for version control and CI integration using Jupytext.
+
+## 🧪 Testing
+
+Unit tests are available for the interactive demo functionality:
+```bash
+python -m pytest tests/test_interactive_demo.py -v
+```
+
+## 📚 Documentation
+
+For detailed information about the Hong Kong stock pattern recognition engine, see:
+- [Product Specifications](../Docs/Product_Specs.md)
+- [User Stories](../Docs/user_story/)
+- [Implementation Progress](../progress.md)
+
+---
+
+**🎓 Built for Hong Kong Stock Pattern Recognition**  
+*StockAnalyzer Interactive Demo - Complete end-to-end workflow* 

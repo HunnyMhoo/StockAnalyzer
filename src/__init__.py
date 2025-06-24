@@ -18,6 +18,7 @@ from .pattern_labeler import (
     LabelValidator,
     save_labeled_patterns,
     load_labeled_patterns,
+    is_false_breakout,
     ValidationError,
     PatternLabelError
 )
@@ -78,6 +79,7 @@ __all__ = [
     "LabelValidator",
     "save_labeled_patterns",
     "load_labeled_patterns",
+    "is_false_breakout",
     "ValidationError",
     "PatternLabelError",
 

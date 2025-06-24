@@ -1,86 +1,86 @@
 ---
-description: Documentation and analysis of data structures, feature engineering, pattern recognition, and classification models for stock market analysis
-globs: src/pattern_*.py,src/feature_*.py,src/technical_indicators.py,src/data_*.py,src/model_*.py
+description: Documentation of core pattern data structures, classifications, and relationships in HK stock trading pattern detection
+globs: src/**,notebooks/**,examples/**,test_**,scripts/**
 alwaysApply: false
 ---
 
 
 # data-models-patterns
 
-## Core Pattern Data Structures
+## Core Pattern Structure (Importance: 95)
 
-1. Pattern Label Classification (Importance: 95)
-- Three-state classification system: positive, negative, neutral 
-- Required fields: ticker (XXXX.HK format), date range, label type, notes
-- Pattern validation rules prevent overlapping labels
-- Atomic updates with audit timestamps
+Pattern detection focuses on 4 key feature categories with 18 technical indicators:
 
-2. Technical Features (Importance: 90)
-- 18 distinct features across 4 categories:
-
-a) Trend Context
-- Prior trend return
-- Above SMA-50 ratio
-- Trend angle
-- SMA crossover patterns
-
-b) Correction Phase  
-- Drawdown percentage
-- Recovery return
-- Down day ratio
-- Recovery period metrics
-
-c) Support Break Analysis
-- Support level detection
-- Break depth percentage
-- False break flags
-- Recovery volume ratios
-
-d) Technical Indicators
-- RSI-14 values
-- MACD differentials
-- Volatility measures
+1. Trend Context Features
+- prior_trend_return
+- above_sma_50_ratio 
+- trend_angle
+- SMA relationships
 - Volume ratios
+- Returns and momentum
 
-3. Pattern Recognition Rules (Importance: 85)
-- Minimum 10 features required for pattern confirmation
-- Volume confirmation requirements
-- Configurable lookback windows
-- Binary classification with confidence scoring
+2. Support Break Analysis
+- support_level_pct
+- break_depth
+- recovery_validation
+- volume_confirmation
 
-4. Feature Output Format (Importance: 80)
-- 23 standardized columns:
-  - 5 metadata fields
-  - 18 technical features
-- Quality controls for missing data
-- Feature categorization for ML input
+3. Correction Phase Metrics
+- drawdown_percentage
+- recovery_return
+- down_day_ratio
+- correction_length
+- volume_behavior
 
-## Pattern Model Training Structure (Importance: 75)
+4. Technical Indicators
+- Custom RSI implementation
+- MACD divergence
+- Multi-timeframe SMAs
+- Bollinger analysis
 
-1. Training Data Requirements
-- Minimum 30 samples per pattern class
-- SMOTE balancing for pattern distributions
-- Cross-validation with pattern stratification
+## Pattern Classifications (Importance: 90)
 
-2. Model Features
-- Feature scaling based on pattern complexity
-- Pattern-specific evaluation metrics
-- Feature importance ranking system
-- Model confidence analysis in 0.1 increments
+Label Types:
+- Positive: Valid bull trend → dip → false resistance break patterns
+- Negative: Non-qualifying patterns
+- Neutral: Inconclusive patterns requiring further analysis
 
-## Support Break Pattern Model (Importance: 70)
+Pattern Requirements:
+- Minimum 5-day pattern length
+- Maximum 20-day window
+- Prior context period of 30 days
+- Volume confirmation thresholds
 
-1. Break Detection Features
-- Support level identification using local minima
-- Break depth calculations
-- False break validation rules
-- Volume confirmation metrics
+## Confidence Scoring (Importance: 85)
 
-2. Pattern Validation
-- Break threshold percentages
-- Recovery period validation
-- Volume-based confirmation rules
-- Trend context requirements
+Three-tier classification system:
+- High: ≥0.8 confidence
+- Medium: 0.6-0.8 confidence  
+- Low: <0.6 confidence
+
+Feature importance weighting across categories:
+- Trend Context: 35%
+- Support Break: 25%
+- Correction Phase: 25%
+- Technical: 15%
+
+## Data Relationships (Importance: 80)
+
+Pattern Components:
+- ticker: XXXX.HK format
+- window_start_date: Pattern start
+- window_end_date: Pattern completion
+- confidence_score: 0.0-1.0 range
+- features: 18 technical metrics
+- label_type: positive/negative/neutral
+- validation_flags: Support/volume confirmations
+- outcome_tracking: Success/failure record
+
+Key Files:
+- src/feature_extractor.py
+- src/pattern_model_trainer.py
+- src/pattern_scanner.py
+- notebooks/04_feature_extraction.ipynb
 
 $END$
 

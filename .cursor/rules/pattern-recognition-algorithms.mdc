@@ -1,53 +1,62 @@
 ---
-description: Defines pattern recognition algorithms, technical indicators, and classification logic for stock market analysis
-globs: src/pattern_*.py,src/feature_extractor.py,src/technical_indicators.py,notebooks/*_feature_extraction.ipynb
+description: Technical specification for pattern recognition algorithms in stock trading, focusing on trend analysis and support break detection
+globs: **/pattern*.{py,ipynb},**/feature*.{py,ipynb},**/model*.{py,ipynb},**/technical*.{py,ipynb}
 alwaysApply: false
 ---
 
 
 # pattern-recognition-algorithms
 
-Core Pattern Recognition Components (Importance: 95)
+Core Feature Categories:
 
-1. Pattern Feature Extraction System
-- 18 distinct technical features across 4 categories:
-  - Trend Context: prior_trend_return, above_sma_50_ratio, trend_angle, SMA crossovers
-  - Correction Phase: drawdown_pct, recovery_return, down_day_ratio
-  - Support Break: level identification, break_depth_pct, false_break_detection
-  - Technical Indicators: RSI-14, MACD differential, volatility, volume ratios
+1. Trend Context Analysis (90/100)
+- Prior trend return calculation over configurable windows 
+- SMA-50 ratio analysis for trend positioning
+- Trend angle measurement using regression
+- Returns 6 trend-specific indicators
 
-2. Pattern Classification Rules (Importance: 90)
-- Three-state classification: positive, negative, neutral
-- Minimum 10 features required for pattern confirmation
-- Volume confirmation requirements for pattern validation
-- Support/resistance break validation logic:
-  - Break depth percentage thresholds
-  - Recovery period validation
-  - False break detection criteria
+2. Support Break Detection (95/100)
+- Identifies support levels from historical price data
+- Measures break depth percentages
+- False break validation with recovery confirmation
+- Volume behavior tracking during recoveries
+- Produces 3 support-related metrics
 
-3. Support Break Detection (Importance: 85)
-- Automated support level identification using local minima
-- Break depth calculation relative to support levels
-- Recovery tracking with volume confirmation
-- False break detection with configurable parameters
+3. Correction Phase Analysis (85/100)
+- Drawdown percentage calculation 
+- Recovery metrics computation
+- Down day ratio tracking
+- Generates 5 correction indicators
 
-4. Trend Analysis Implementation (Importance: 80)
-- Prior trend return calculations
-- Above/below moving average ratio analysis
-- Trend angle measurements using regression
-- Moving average crossover pattern detection
+4. Technical Signal Integration (75/100)
+- Multiple SMA combinations (5/10/20)
+- RSI-14 implementation
+- MACD divergence computation
+- Volume ratio analysis
+- Outputs 4 technical metrics
 
-5. Technical Indicator Suite (Importance: 75)
-- Custom RSI implementation with 14-period lookback
-- MACD differential analysis for trend confirmation
-- Volume ratio calculations for pattern validation
-- Volatility measurement for pattern qualification
+Key Pattern Recognition Rules:
+- Minimum 5-day window requirement
+- Support level confirmation logic
+- Volume confirmation for breakouts
+- Pattern window sizing (20-day default)
+- Confidence thresholds (0.6-0.8)
 
-File Paths:
-/src/feature_extractor.py
-/src/technical_indicators.py
-/src/pattern_model_trainer.py
-/notebooks/04_feature_extraction.ipynb
+Validation Requirements:
+- OHLCV data completeness checks
+- Lookback period validation
+- Support level confirmation rules
+- Pattern overlap detection
+- Minimum sample size (30) for training
+
+Pattern Classification:
+- Three-tier confidence bands:
+  - High: ≥0.8
+  - Medium: 0.6-0.8
+  - Low: <0.6
+- Binary classification (positive/negative)
+- Pattern-specific feature extraction
+- Multi-timeframe confirmation
 
 $END$
 

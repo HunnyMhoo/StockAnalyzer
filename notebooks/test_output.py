@@ -1,9 +1,7 @@
 # ---
 # jupyter:
 #   jupytext:
-#     cell_metadata_filter: -all
 #     formats: ipynb,py:percent
-#     notebook_metadata_filter: all,-language_info,-toc,-latex_envs
 #     text_representation:
 #       extension: .py
 #       format_name: percent
@@ -15,7 +13,12 @@
 #     name: python3
 # ---
 
-# %% [markdown]
+# %% papermill={"duration": 0.006403, "end_time": "2025-06-24T07:04:41.157212", "exception": false, "start_time": "2025-06-24T07:04:41.150809", "status": "completed"} tags=["injected-parameters"]
+# Parameters
+QUICK_MODE = True
+
+
+# %% [markdown] papermill={"duration": 0.000855, "end_time": "2025-06-24T07:04:41.159565", "exception": false, "start_time": "2025-06-24T07:04:41.158710", "status": "completed"} magic_args="[markdown]"
 # # 🎯 Advanced Hong Kong Stock Pattern Finder
 # This notebook finds stocks with patterns similar to a user-defined example, using user-provided negative examples for more accurate training.
 #
@@ -24,7 +27,7 @@
 # 2.  **Define Negative Examples** → Provide a comma-separated list of stock tickers that explicitly **do not** show the desired pattern.
 # 3.  **Find Matches** → The system trains a temporary model on your examples and scans the market for similar patterns.
 
-# %%
+# %% papermill={"duration": 0.216627, "end_time": "2025-06-24T07:04:41.377094", "exception": false, "start_time": "2025-06-24T07:04:41.160467", "status": "completed"}
 # %%
 # CELL 1: SETUP - Imports and Path Configuration
 import os
@@ -37,68 +40,25 @@ import numpy as np
 import ipywidgets as widgets
 from IPython.display import display, clear_output, HTML
 
-# %%
+# %% papermill={"duration": 0.004076, "end_time": "2025-06-24T07:04:41.382251", "exception": false, "start_time": "2025-06-24T07:04:41.378175", "status": "completed"}
 # Setup paths
 current_dir = Path.cwd()
 project_root = current_dir.parent if current_dir.name == 'notebooks' else current_dir
 sys.path.insert(0, str(project_root))
 
-# %%
+# %% papermill={"duration": 0.978388, "end_time": "2025-06-24T07:04:42.361685", "exception": false, "start_time": "2025-06-24T07:04:41.383297", "status": "completed"}
 # Import custom modules
-from src.data_fetcher import fetch_hk_stocks, get_all_cached_tickers, validate_cached_data_file
+from src.data_fetcher import fetch_hk_stocks
 from src.feature_extractor import FeatureExtractor
 from src.pattern_scanner import PatternScanner, ScanningConfig
 from src.hk_stock_universe import get_hk_stock_list_static
 
-# %%
+# %% papermill={"duration": 0.004213, "end_time": "2025-06-24T07:04:42.367008", "exception": false, "start_time": "2025-06-24T07:04:42.362795", "status": "completed"}
 warnings.filterwarnings('ignore')
 print("✅ Setup Complete: All libraries and modules are loaded.")
 
-# %% [markdown]
-# ## 📊 Data Discovery
-#
-# Let's check what stock data is available for pattern scanning:
 
-# %%
-def show_data_summary():
-    """Display summary of available stock data for pattern scanning"""
-    print("🔍 Discovering available stock data...")
-    available_stocks = get_all_cached_tickers()
-    
-    if not available_stocks:
-        print("❌ No cached stock data found!")
-        print("📝 Please run data collection notebooks first (01_data_collection.py or 02_bulk_data_collection.py)")
-        return
-    
-    print(f"✅ Found {len(available_stocks)} stocks with cached data")
-    print(f"📈 Sample stocks: {', '.join(available_stocks[:10])}")
-    if len(available_stocks) > 10:
-        print(f"   ... and {len(available_stocks) - 10} more")
-    
-    # Show data quality overview
-    print("\n📊 Data Quality Overview:")
-    high_quality = medium_quality = low_quality = 0
-    
-    for ticker in available_stocks[:20]:  # Sample first 20 for performance
-        validation = validate_cached_data_file(ticker)
-        if validation['data_quality_score'] >= 0.8:
-            high_quality += 1
-        elif validation['data_quality_score'] >= 0.6:
-            medium_quality += 1
-        else:
-            low_quality += 1
-    
-    total_sampled = min(20, len(available_stocks))
-    print(f"   High Quality: {high_quality}/{total_sampled} stocks")
-    print(f"   Medium Quality: {medium_quality}/{total_sampled} stocks") 
-    print(f"   Low Quality: {low_quality}/{total_sampled} stocks")
-    
-    print(f"\n🎯 Ready to scan {len(available_stocks)} stocks for patterns!")
-
-show_data_summary()
-
-
-# %%
+# %% papermill={"duration": 0.003573, "end_time": "2025-06-24T07:04:42.371661", "exception": false, "start_time": "2025-06-24T07:04:42.368088", "status": "completed"}
 # %%
 # Simple config class that can be pickled (must be at module level)
 class SimpleConfig:
@@ -106,7 +66,7 @@ class SimpleConfig:
         self.model_type = "xgboost"
 
 
-# %%
+# %% papermill={"duration": 0.009745, "end_time": "2025-06-24T07:04:42.382486", "exception": false, "start_time": "2025-06-24T07:04:42.372741", "status": "completed"}
 # %%
 # CELL 2: PATTERN ANALYSIS FUNCTION (FIXED VERSION)
 def find_similar_patterns(positive_ticker, start_date_str, end_date_str, negative_tickers_str):
@@ -197,15 +157,8 @@ def find_similar_patterns(positive_ticker, start_date_str, end_date_str, negativ
             raise Exception(f"Model training failed: {e}")
 
         # --- 5. Scan for Similar Patterns ---
-        print(f"🔎 Discovering available stocks from cached data...")
-        all_available_stocks = get_all_cached_tickers()
-        
-        if not all_available_stocks:
-            print("⚠️  No cached stock data found. Please run data collection first.")
-            return
-            
-        print(f"📊 Found {len(all_available_stocks)} stocks with cached data")
         print(f"🔎 Scanning for similar patterns...")
+        all_hk_stocks = get_hk_stock_list_static()
         
         # Create a model package compatible with PatternScanner
         # This fixes the "argument of type 'XGBClassifier' is not iterable" error
@@ -231,27 +184,15 @@ def find_similar_patterns(positive_ticker, start_date_str, end_date_str, negativ
             # Initialize the scanner with the properly formatted model package
             scanner = PatternScanner(model_path=temp_model_path)
             
-            scan_list = [t for t in all_available_stocks if t != positive_ticker and t not in negative_tickers]
-            print(f"📊 Scanning {len(scan_list)} stocks (excluding positive and negative examples)")
-            
+            scan_list = [t for t in all_hk_stocks if t != positive_ticker and t not in negative_tickers]
             scan_results = scanner.scan_tickers(scan_list, ScanningConfig(min_confidence=0.7))
 
             if scan_results and not scan_results.matches_df.empty:
                 matches_df = scan_results.matches_df.sort_values('probability', ascending=False)
-                print(f"\n✅ Found {len(matches_df)} similar patterns out of {len(scan_list)} stocks scanned!")
-                
-                # Show confidence distribution
-                high_conf = len(matches_df[matches_df['probability'] >= 0.9])
-                med_conf = len(matches_df[(matches_df['probability'] >= 0.8) & (matches_df['probability'] < 0.9)])
-                low_conf = len(matches_df[matches_df['probability'] < 0.8])
-                
-                print(f"📈 Confidence Distribution: {high_conf} high (≥90%), {med_conf} medium (80-90%), {low_conf} moderate (70-80%)")
-                print(f"🎯 Top match: {matches_df.iloc[0]['ticker']} with {matches_df.iloc[0]['probability']:.1%} confidence")
-                
+                print(f"\n✅ Found {len(matches_df)} similar patterns!")
                 display(HTML(matches_df.to_html(index=False)))
             else:
-                print(f"\n✅ Analysis complete. No similar patterns found out of {len(scan_list)} stocks scanned.")
-                print("💡 Try lowering the confidence threshold or adjusting your pattern examples.")
+                print("\n✅ Analysis complete. No similar patterns were found.")
         finally:
             # Clean up the temporary model file
             if os.path.exists(temp_model_path):
@@ -262,7 +203,7 @@ def find_similar_patterns(positive_ticker, start_date_str, end_date_str, negativ
         import traceback
         traceback.print_exc()
 
-# %%
+# %% papermill={"duration": 0.009311, "end_time": "2025-06-24T07:04:42.392933", "exception": false, "start_time": "2025-06-24T07:04:42.383622", "status": "completed"}
 # %%
 # CELL 3: USER INTERFACE AND EXECUTION
 # Create widgets for user input
@@ -273,7 +214,7 @@ negative_tickers_input = widgets.Text(value='0005.HK,0941.HK,0388.HK', descripti
 run_button = widgets.Button(description="🔍 Find Similar Patterns", button_style='primary', layout=widgets.Layout(width='250px', height='40px'))
 output_area = widgets.Output()
 
-# %%
+# %% papermill={"duration": 0.015871, "end_time": "2025-06-24T07:04:42.410039", "exception": false, "start_time": "2025-06-24T07:04:42.394168", "status": "completed"}
 def on_button_click(b):
     with output_area:
         clear_output(True)
@@ -284,10 +225,10 @@ def on_button_click(b):
             negative_tickers_input.value
         )
 
-# %%
+# %% papermill={"duration": 0.011484, "end_time": "2025-06-24T07:04:42.424158", "exception": false, "start_time": "2025-06-24T07:04:42.412674", "status": "completed"}
 run_button.on_click(on_button_click)
 
-# %%
+# %% papermill={"duration": 0.03696, "end_time": "2025-06-24T07:04:42.464091", "exception": false, "start_time": "2025-06-24T07:04:42.427131", "status": "completed"}
 # Display the interface
 display(
     widgets.VBox([
@@ -304,4 +245,4 @@ display(
     ])
 ) 
 
-# %%
+# %% papermill={"duration": 0.001012, "end_time": "2025-06-24T07:04:42.466422", "exception": false, "start_time": "2025-06-24T07:04:42.465410", "status": "completed"}

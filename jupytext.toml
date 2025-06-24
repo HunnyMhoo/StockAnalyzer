@@ -1,0 +1,6 @@
+# Automatically sync .py and .ipynb files
+formats = "ipynb,py:percent"
+
+# Default configuration
+notebook_metadata_filter = "all,-language_info,-toc,-latex_envs"
+cell_metadata_filter = "-all" 

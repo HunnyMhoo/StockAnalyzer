@@ -1,63 +1,89 @@
 ---
-description: Documents data flow between components from data collection through feature extraction, pattern labeling, model training and evaluation
-globs: src/**/*.py,notebooks/**/*.ipynb
+description: Documents data flow between components for Hong Kong stock pattern recognition system
+globs: *.py,*.ipynb,src/*,notebooks/*,examples/*
 alwaysApply: false
 ---
 
 
 # data-flow-pipeline
 
-Core Data Pipeline Components:
+The data pipeline consists of 5 major stages connecting data collection through pattern detection:
 
-1. Data Collection (src/bulk_data_fetcher.py, src/data_fetcher.py):
-- HK stock data validation and processing
-- Market-specific caching with integrity checks
-- Sector-based batch processing aligned with HK exchange requirements
-- Stock universe segmentation by market sectors
-Importance: 85
+1. Data Collection Stage
+Input: Hong Kong stock tickers (.HK format)
+Processing:
+- Bulk data fetcher (src/bulk_data_fetcher.py):
+  - Sector-based collection (tech, finance, property)
+  - Tiered batch sizing (5-50 stocks)
+  - Intelligent caching with 7-day freshness
+Output: Raw OHLCV data for HK stocks
 
-2. Pattern Labeling (src/pattern_labeler.py):
-- Structure for labeling trading patterns with start/end dates
-- Pattern type classification (positive/negative/neutral)
-- Label validation enforcing HK market requirements
-- Pattern overlap detection and metadata tracking
-Importance: 90
+2. Feature Extraction Stage
+Input: Raw OHLCV data
+Processing:
+- Feature extractor (src/feature_extractor.py):
+  - 18+ technical indicators across 4 categories
+  - Window-based calculation (20-30 days)
+  - Pattern-specific feature generation
+Output: Normalized feature vectors
 
-3. Feature Extraction (src/feature_extractor.py):
-- 18 technical features across 4 categories:
-  * Trend Context (returns, SMA ratios, angles)
-  * Correction Phase (drawdowns, recovery metrics)
-  * Support Break Analysis (levels, break depth)
-  * Technical Indicators (RSI, MACD, volume)
-- Window-based extraction with prior context analysis
-Importance: 95
+3. Pattern Labeling Stage 
+Input: Feature vectors + expert knowledge
+Processing:
+- Pattern labeler (src/pattern_labeler.py):
+  - Manual pattern identification
+  - Positive/negative classification
+  - Date range validation
+Output: Labeled pattern instances
 
-4. Model Training (src/pattern_model_trainer.py):
-- Pattern detection pipeline with binary classification
-- SMOTE handling for imbalanced pattern distributions
-- Pattern-specific feature validation
-- Cross-validation with stratification for consistency
-Importance: 85
+4. Model Training Stage
+Input: Labeled patterns
+Processing:
+- Model trainer (src/pattern_model_trainer.py):
+  - SMOTE balancing for pattern classes
+  - XGBoost/RandomForest optimization
+  - Cross-validation for pattern reliability
+Output: Trained pattern detection models
 
-5. Model Evaluation (src/model_evaluator.py):
-- Confidence scoring analysis
-- Misclassification categorization
-- Pattern-specific performance metrics
-- Feature importance ranking system
-Importance: 80
+5. Pattern Scanning Stage
+Input: New market data + trained models
+Processing:
+- Pattern scanner (src/pattern_scanner.py):
+  - Sliding window pattern detection
+  - Confidence scoring (0.5-0.8 threshold)
+  - Multi-model consensus
+Output: Pattern matches with confidence scores
 
-Data Flow Sequence:
-1. Raw stock data collection → Market-specific validation
-2. Pattern labeling → Metadata enrichment
-3. Feature extraction → Technical indicator calculation
-4. Model training → Pattern classification
-5. Evaluation → Performance analysis
+Key Data Flow Integration Points:
 
-Key Integration Points:
-- Data validation between collection and feature extraction
-- Pattern label integration with feature calculation
-- Feature standardization for model input
-- Training output to evaluation pipeline
+1. Collection → Feature Extraction
+- Cached data handoff
+- Missing data validation
+- HK market format verification
+
+2. Feature Extraction → Pattern Labeling
+- Feature vector standardization
+- Window alignment
+- Technical indicator calculation
+
+3. Pattern Labeling → Model Training
+- Label balancing
+- Feature selection
+- Cross-validation splits
+
+4. Model Training → Pattern Scanning
+- Model persistence
+- Feature scaling preservation
+- Confidence calibration
+
+The pipeline emphasizes data integrity and validation specific to Hong Kong market characteristics throughout each stage while maintaining pattern detection accuracy.
+
+Importance Scores:
+- Data Collection: 85 (Critical market data acquisition)
+- Feature Extraction: 90 (Core pattern recognition)
+- Pattern Labeling: 95 (Expert knowledge capture)
+- Model Training: 80 (Pattern learning)
+- Pattern Scanning: 85 (Production pattern detection)
 
 $END$
 

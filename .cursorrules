@@ -1,4 +1,3 @@
-
 # main-overview
 
 ## Development Guidelines
@@ -9,46 +8,82 @@
 - Always provide a complete PLAN with REASONING based on evidence from code and logs before making changes.
 - Explain your OBSERVATIONS clearly, then provide REASONING to identify the exact issue. Add console logs when needed to gather more information.
 
+## Notebook and Python File Priority Rules
 
-The Hong Kong Stock Pattern Recognition Engine implements specialized market analysis functionality across four core domains:
+**CRITICAL: Always prioritize .py files over .ipynb files for all modifications and creation.**
 
-1. Pattern Recognition Core (90/100)
-- Custom feature extraction system with 18 technical indicators 
-- Support/resistance break pattern detection
-- Four analysis categories:
-  - Trend Context Features
-  - Correction Phase Analysis
-  - Support Break Detection
-  - Technical Indicator Suite
+### File Modification Priority:
+1. **Primary Target**: Always modify or create `.py` files in the `notebooks/` directory
+2. **Secondary**: Only modify `.ipynb` files if explicitly requested or if no `.py` equivalent exists
+3. **Sync Requirement**: When modifying `.py` files, mention that Jupytext will auto-sync to `.ipynb`
 
-2. Hong Kong Market Integration (85/100)
-`src/bulk_data_fetcher.py`, `src/hk_stock_universe.py`
-- HK-specific stock validation (XXXX.HK format)
-- Sector categorization (tech, finance, property)
-- Market-specific trading calendars
-- Exchange-compliant rate limiting
+### Specific Rules:
+- **Code Changes**: Always edit the `.py` version (e.g., `notebooks/06_interactive_demo.py`)
+- **New Notebooks**: Create `.py` files with Jupytext format (`# %%` cell markers)
+- **Function Updates**: Modify functions in `.py` files, not `.ipynb` files
+- **Bug Fixes**: Apply fixes to `.py` files to ensure version control consistency
+- **Documentation**: Update code comments and docstrings in `.py` files
 
-3. Pattern Classification System (80/100)
-`src/pattern_model_trainer.py`, `src/pattern_labeler.py`
-- Binary pattern classification (positive/negative)
-- Support break validation rules
+### Jupytext Format Requirements:
+- Use `# %%` for code cells
+- Use `# %% [markdown]` for markdown cells
+- Include proper Jupytext header with metadata
+- Maintain cell structure compatible with notebook conversion
+
+### Rationale:
+- `.py` files are git-friendly and avoid merge conflicts
+- Jupytext automatically syncs changes to `.ipynb` files
+- Better code review and version control
+- Consistent with established project workflow
+- Supports CI/CD pipeline with Papermill
+
+**Exception**: Only modify `.ipynb` files directly when:
+- User explicitly requests `.ipynb` modification
+- Debugging notebook-specific execution issues
+- Working with notebook-only features (widgets, interactive outputs)
+
+Hong Kong Stock Pattern Recognition System
+
+Core Components:
+
+1. Pattern Detection Engine (90)
+- Specialized detection of "bull trend → dip → false resistance break" patterns
+- 18+ technical indicators across 4 categories (trend, correction, support break, technical)
+- Confidence-based pattern matching with thresholds (0.6-0.8)
+- Hong Kong market-specific validation rules
+Key files: src/pattern_scanner.py, src/feature_extractor.py
+
+2. Stock Data Management (85)
+- Four-tier collection framework:
+  * Beginner: 10-50 stocks with safe rate limits
+  * Intermediate: 50-200 stocks with sector focus
+  * Advanced: 200-500 stocks for market coverage
+  * Enterprise: 500+ parallel processing
+- HK-specific ticker validation (XXXX.HK format)
+Key files: src/bulk_data_fetcher.py, src/data_fetcher.py
+
+3. Pattern Training Pipeline (80)
+- Manual pattern tagging system with date range validation
+- Feature extraction across trend context, correction phase, support breaks
+- Model training with SMOTE balancing for pattern distributions
+- Cross-validation specific to time series patterns
+Key files: src/pattern_model_trainer.py
+
+4. Signal Outcome Analysis (75)
+- Three-tier confidence classification (High ≥0.8, Medium 0.6-0.8, Low <0.6)
+- Success/failure tracking with feedback loop
+- Pattern performance metrics by confidence bands
+- Trading signal quality validation
+Key files: src/signal_outcome_tagger.py
+
+5. Technical Indicator Framework (70)
+- Support/resistance break validation
 - Volume confirmation requirements
-- Pattern overlap prevention
+- False breakout detection with recovery validation 
+- Pattern-specific technical measurements
+Key files: src/technical_indicators.py
 
-4. Technical Analysis Engine (75/100)
-`src/technical_indicators.py`, `src/feature_extractor.py`
-- Custom drawdown calculations
-- Recovery metrics
-- False break detection
-- Volume/price ratio analysis
-
-The system implements a complete pipeline for Hong Kong stock pattern recognition:
-1. Data collection with market-specific validation
-2. Pattern labeling with strict classification rules
-3. Feature extraction using 18 specialized indicators
-4. Model training with pattern-specific evaluation metrics
-
-Core business value centers on specialized Hong Kong market pattern recognition combining traditional technical analysis with machine learning validation while adhering to exchange-specific requirements.
+Data flows through collection → feature extraction → pattern detection → signal validation, with market-specific rules and validations at each stage focused on Hong Kong exchange requirements and trading patterns.
 
 $END$
 

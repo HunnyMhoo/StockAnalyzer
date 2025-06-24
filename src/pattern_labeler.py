@@ -417,4 +417,66 @@ def load_labeled_patterns(path: Optional[str] = None) -> List[PatternLabel]:
         PatternLabelError: If loading fails
     """
     labeler = PatternLabeler(path)
-    return labeler.load_labels() 
+    return labeler.load_labels()
+
+
+def is_false_breakout(ohlcv_data: pd.DataFrame, 
+                     lookback_days: int = 30,
+                     min_trend_days: int = 10) -> bool:
+    """
+    Detect the pattern: bull trend → dip → false resistance break
+    Helper function for interactive notebook pattern detection.
+    
+    Args:
+        ohlcv_data: OHLCV DataFrame
+        lookback_days: Days to analyze
+        min_trend_days: Minimum days for trend establishment
+        
+    Returns:
+        bool: True if pattern detected
+    """
+    try:
+        from .technical_indicators import detect_false_support_break, find_recent_support_level
+    except ImportError:
+        from technical_indicators import detect_false_support_break, find_recent_support_level
+    
+    if len(ohlcv_data) < lookback_days:
+        return False
+    
+    try:
+        # Get recent data
+        recent_data = ohlcv_data.tail(lookback_days)
+        close_prices = recent_data['Close']
+        low_prices = recent_data['Low']
+        
+        # 1. Check for overall bullish trend (first half vs second half)
+        mid_point = len(close_prices) // 2
+        early_avg = close_prices.iloc[:mid_point].mean()
+        recent_avg = close_prices.iloc[mid_point:].mean()
+        
+        if recent_avg <= early_avg * 1.02:  # At least 2% trend up
+            return False
+        
+        # 2. Find recent support level
+        support_level = find_recent_support_level(
+            low_prices, 
+            len(low_prices) - 1, 
+            lookback_days=min_trend_days
+        )
+        
+        if support_level is None:
+            return False
+        
+        # 3. Check for false support break
+        is_false_break, recovery_days = detect_false_support_break(
+            close_prices,
+            support_level,
+            break_threshold=0.02,  # 2% break
+            recovery_days=3
+        )
+        
+        return is_false_break
+        
+    except Exception:
+        # Silently return False for any calculation errors
+        return False

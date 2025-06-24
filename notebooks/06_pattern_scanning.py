@@ -1,19 +1,32 @@
-#!/usr/bin/env python
-# coding: utf-8
-# Pattern Scanning Demo - User Story 1.5
+# ---
+# jupyter:
+#   jupytext:
+#     formats: ipynb,py:percent
+#     text_representation:
+#       extension: .py
+#       format_name: percent
+#       format_version: '1.3'
+#       jupytext_version: 1.17.2
+#   kernelspec:
+#     display_name: Python 3
+#     language: python
+#     name: python3
+# ---
 
-This notebook demonstrates the pattern scanning functionality that applies trained models to detect trading patterns across multiple HK stocks.
+# %% [raw] vscode={"languageId": "raw"}
+# # Pattern Scanning Demo - User Story 1.5
+#
+# This notebook demonstrates the pattern scanning functionality that applies trained models to detect trading patterns across multiple HK stocks.
+#
+# ## Key Features:
+# - Load trained pattern detection models
+# - Scan multiple tickers using sliding windows
+# - Extract features using same logic as training
+# - Generate confidence-ranked pattern matches
+# - Save timestamped results
+#
 
-## Key Features:
-- Load trained pattern detection models
-- Scan multiple tickers using sliding windows
-- Extract features using same logic as training
-- Generate confidence-ranked pattern matches
-- Save timestamped results
-
-# In[1]:
-
-
+# %%
 # Import required libraries
 import sys
 import os
@@ -33,9 +46,7 @@ print("📦 Libraries imported successfully")
 print(f"⏰ Notebook run time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
 
-# In[2]:
-
-
+# %%
 # Validate Available Models and Data
 print("🔍 Checking available resources...")
 
@@ -64,9 +75,7 @@ for stock in sample_stocks:
 print(f"\n✅ System ready with {len(model_files)} models and {len(data_files)} stock datasets")
 
 
-# In[4]:
-
-
+# %%
 # Basic Pattern Scanning Demo
 print("🎯 Running Basic Pattern Scanning Demo")
 print("=" * 50)
@@ -98,17 +107,17 @@ try:
         save_results=True,
         top_matches_display=5
     )
-
+    
     # Notebook Cell Validation Requirements
     total_tickers = len(available_tickers)
     windows_evaluated = results.scanning_summary.get('total_windows_evaluated', 0)
     matches_found = results.scanning_summary.get('matches_found', 0)
-
+    
     print(f"\n📊 SCANNING SUMMARY:")
     print(f"  - Total tickers scanned: {total_tickers}")
     print(f"  - Windows evaluated: {windows_evaluated}")
     print(f"  - Matches found (≥{min_confidence}): {matches_found}")
-
+    
     # Assertions for expected DataFrame schema
     results_df = results.matches_df
     if results_df is not None and len(results_df) > 0:
@@ -116,7 +125,7 @@ try:
         assert all(col in results_df.columns for col in expected_columns), f"Missing required columns: {expected_columns}"
         assert results_df['confidence_score'].notna().all(), "Found null confidence scores"
         print("✅ DataFrame schema validation passed")
-
+        
         # Sample printout of top matches
         if matches_found > 0:
             print(f"\n🏆 TOP {min(5, matches_found)} MATCHES:")
@@ -127,15 +136,13 @@ try:
             print("\n⚠️ No matches found above confidence threshold")
     else:
         print("\n⚠️ No results generated - check data availability and model compatibility")
-
+        
 except Exception as e:
     print(f"\n❌ Error during scanning: {str(e)}")
     print("This may indicate data or model compatibility issues")
 
 
-# In[5]:
-
-
+# %%
 # Advanced Configuration Demo
 print("🔧 Advanced Configuration Examples")
 print("=" * 50)
@@ -152,7 +159,7 @@ try:
         save_results=False,
         top_matches_display=3
     )
-
+    
     matches_found = high_conf_results.scanning_summary.get('matches_found', 0)
     if matches_found > 0:
         print(f"   Found {matches_found} high-confidence matches")
@@ -175,7 +182,7 @@ try:
         save_results=False,
         top_matches_display=5
     )
-
+    
     matches_found = quick_results.scanning_summary.get('matches_found', 0)
     if matches_found > 0:
         print(f"   Found {matches_found} matches in quick scan")
@@ -189,9 +196,7 @@ except Exception as e:
 print("\n✅ Configuration examples completed")
 
 
-# In[6]:
-
-
+# %%
 # PatternScanner Class Direct Usage Demo
 print("🔬 Direct PatternScanner Class Usage")
 print("=" * 50)
@@ -200,17 +205,17 @@ print("=" * 50)
 model_path = '../models/model_xgboost_20250622_185028.pkl'
 try:
     scanner = PatternScanner(model_path)
-
+    
     print(f"✅ PatternScanner initialized successfully:")
     print(f"   - Model type: {type(scanner.model).__name__}")
     print(f"   - Features expected: {len(scanner.feature_names)}")
     print(f"   - Sample features: {scanner.feature_names[:5]}")
-
+    
     # Test with single ticker using the scanner's scan method
     test_tickers = ['0700.HK']
-
+    
     print(f"\n🔍 Testing with {test_tickers[0]}:")
-
+    
     # Create a basic scanning configuration
     test_config = ScanningConfig(
         window_size=30,
@@ -219,30 +224,28 @@ try:
         save_results=False,
         top_matches_display=3
     )
-
+    
     # Run scanning on single ticker
     test_results = scanner.scan_tickers(test_tickers, test_config)
-
+    
     print(f"   - Scanning completed:")
     print(f"   - Total matches: {test_results.scanning_summary['matches_found']}")
     print(f"   - Scanning time: {test_results.scanning_time:.2f} seconds")
-
+    
     if not test_results.matches_df.empty:
         print(f"   - Sample results:")
         for idx, row in test_results.matches_df.head(2).iterrows():
             print(f"     {row['ticker']}: {row['confidence_score']:.3f} ({row['window_start_date']} to {row['window_end_date']})")
     else:
         print("   - No matches found above confidence threshold")
-
+        
 except Exception as e:
     print(f"❌ Error with PatternScanner: {str(e)}")
 
 print("\n✅ Direct class usage demo completed")
 
 
-# In[7]:
-
-
+# %%
 # Final Validation and Summary
 print("🎉 Pattern Scanning Implementation Validation")
 print("=" * 60)

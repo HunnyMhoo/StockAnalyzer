@@ -7,6 +7,184 @@ Development progress tracking for the Hong Kong Stock Pattern Recognition Engine
 
 ## 📅 Latest Updates
 
+### 2025-01-24: Interactive Demo Pattern Matching Optimization & Jupytext Auto-Sync Resolution
+
+**🔧 Major System Improvements:**
+- **Pattern Matching Optimization**: Resolved critical issues causing 0 pattern matches in interactive demo with enhanced training data balancing and confidence threshold adjustments
+- **Jupytext Auto-Sync Fix**: Implemented proper configuration for automatic synchronization between `.py` and `.ipynb` files
+- **Enhanced User Experience**: Added interactive confidence threshold control and comprehensive diagnostic feedback
+- **Model Training Improvements**: Implemented class weighting and simplified parameters for small dataset scenarios
+
+**✅ Changes Made:**
+
+#### 1. **Pattern Matching Algorithm Enhancements (`notebooks/06_interactive_demo.py` & `.ipynb`)**
+- **Lowered Default Confidence Threshold**: Reduced from 70% to 30% for better pattern discovery with limited training data
+- **Added Interactive Confidence Slider**: User-adjustable threshold (10%-90%) with visual feedback and real-time adjustment
+- **Implemented Class Balancing**: Added `compute_class_weight('balanced')` to handle severe training data imbalance
+- **Simplified Model Parameters**: Reduced XGBoost complexity for small datasets (max_depth=3, n_estimators=50)
+- **Enhanced Training Diagnostics**: Real-time feedback on class distribution and imbalance warnings
+
+**Before (0 matches found):**
+```python
+# High confidence threshold causing all rejections
+scan_results = scanner.scan_tickers(scan_list, ScanningConfig(min_confidence=0.7))
+
+# Unbalanced training without class weights
+model = xgb.XGBClassifier(use_label_encoder=False, eval_metric='logloss')
+model.fit(training_df, pd.Series(all_labels))
+```
+
+**After (optimized for pattern discovery):**
+```python
+# User-adjustable confidence threshold with lower default
+scan_results = scanner.scan_tickers(scan_list, ScanningConfig(min_confidence=min_confidence))
+
+# Class-weighted training with simplified parameters
+from sklearn.utils.class_weight import compute_class_weight
+classes = np.unique(all_labels)
+class_weights = compute_class_weight('balanced', classes=classes, y=all_labels)
+weight_dict = dict(zip(classes, class_weights))
+
+model = xgb.XGBClassifier(
+    use_label_encoder=False, 
+    eval_metric='logloss',
+    class_weight=weight_dict,
+    max_depth=3,  # Reduced complexity for small dataset
+    n_estimators=50,  # Fewer trees for stability
+    learning_rate=0.1
+)
+```
+
+#### 2. **Enhanced Diagnostic Feedback System**
+- **Training Data Analysis**: Real-time display of positive vs negative sample counts and class ratio warnings
+- **Pattern Discovery Diagnostics**: Comprehensive troubleshooting tips when no matches are found
+- **Sample Prediction Display**: Debug information showing model predictions on sample tickers
+- **Interactive Feedback**: Updated confidence distribution bands and clearer result interpretation
+- **Error Context**: Specific guidance on improving pattern examples and threshold adjustments
+
+**Diagnostic Features Added:**
+```python
+# Class imbalance detection
+pos_ratio = all_labels.count(1) / len(all_labels)
+if pos_ratio < 0.3:
+    print(f"⚠️  Warning: Severe class imbalance detected ({pos_ratio:.1%} positive)")
+    print("   Consider adding more positive examples for better results")
+
+# Enhanced troubleshooting guidance
+print("💡 **Diagnostic Tips:**")
+print("   1. Try lowering the confidence threshold further (0.2-0.3)")
+print("   2. Add 2-3 more positive examples from different time periods")
+print("   3. Check if your positive pattern is too unique/specific")
+print("   4. Verify negative examples don't accidentally contain the pattern")
+print(f"   5. Current training data: {all_labels.count(1)} positive vs {all_labels.count(0)} negative")
+```
+
+#### 3. **Interactive User Interface Improvements**
+- **Confidence Threshold Slider**: FloatSlider widget (10%-90% range) with real-time parameter adjustment
+- **Enhanced Widget Layout**: Structured input sections with clear guidance and visual separators
+- **Dynamic Parameter Display**: Real-time feedback on selected confidence threshold and expected behavior
+- **Improved Result Visualization**: Updated confidence bands (≥70%, 50-70%, 30-50%) matching new threshold ranges
+
+**User Interface Enhancements:**
+```python
+# Interactive confidence control
+confidence_threshold_input = widgets.FloatSlider(
+    value=0.3,
+    min=0.1,
+    max=0.9,
+    step=0.1,
+    description='Min Confidence:',
+    style={'description_width': 'initial'}
+)
+
+# Enhanced layout with clear sections
+widgets.VBox([
+    widgets.HTML("<h3>Enter Pattern Details</h3>"),
+    # ... positive pattern inputs ...
+    widgets.HTML("<hr style='margin-top: 10px; margin-bottom: 10px'>"),
+    widgets.HTML("<b>Provide comma-separated negative examples...</b>"),
+    negative_tickers_input,
+    widgets.HTML("<hr style='margin-top: 10px; margin-bottom: 10px'>"),
+    widgets.HTML("<b>Adjust confidence threshold (lower = more matches, higher = fewer but more confident).</b>"),
+    confidence_threshold_input,
+    run_button,
+    output_area
+])
+```
+
+#### 4. **Jupytext Auto-Sync Configuration Resolution**
+- **Created Configuration File**: Added `jupytext.toml` in project root with proper format specification
+- **Set Paired Formats**: Configured `06_interactive_demo.ipynb` for automatic `.py` ↔ `.ipynb` synchronization
+- **Manual Sync Execution**: Performed initial sync to align both file versions with latest improvements
+- **Added Sync Utilities**: Created convenient alias (`jupytext-sync`) for future manual synchronization
+
+**Jupytext Configuration Implemented:**
+```toml
+# jupytext.toml
+# Automatically sync .py and .ipynb files
+formats = "ipynb,py:percent"
+
+# Default configuration
+notebook_metadata_filter = "all,-language_info,-toc,-latex_envs"
+cell_metadata_filter = "-all"
+```
+
+**Sync Commands Executed:**
+```bash
+# Configure paired formats
+jupytext --set-formats ipynb,py:percent 06_interactive_demo.ipynb
+
+# Sync files to align versions
+jupytext --sync 06_interactive_demo.py
+
+# Verify synchronization
+jupytext --diff 06_interactive_demo.py 06_interactive_demo.ipynb
+```
+
+#### 5. **Root Cause Analysis and Resolution**
+- **Identified Core Issues**: Severe class imbalance (1 positive vs 3-5 negative), overfitting to single example, high confidence threshold
+- **Training Data Imbalance**: 17-25% positive vs 75-83% negative samples causing model bias toward negative classification
+- **Overfitting Prevention**: Simplified model parameters and class balancing to prevent single-example overfitting
+- **Threshold Optimization**: Lower default threshold with user control for pattern discovery vs precision trade-off
+
+**📊 Implementation Impact:**
+```
+Pattern Matching Improvements:
+✅ Confidence threshold: Reduced from 70% to 30% (user-adjustable 10%-90%)
+✅ Class balancing: Implemented balanced class weights for imbalanced training data
+✅ Model parameters: Simplified XGBoost settings for small dataset stability
+✅ User interface: Added interactive confidence slider with real-time feedback
+✅ Diagnostics: Comprehensive troubleshooting guidance and debug information
+
+Jupytext Auto-Sync Resolution:
+✅ Configuration file: Created jupytext.toml with proper format specification
+✅ Paired formats: Set up automatic .py ↔ .ipynb synchronization
+✅ File alignment: Both versions now contain identical latest improvements
+✅ Sync utilities: Added convenient commands for future synchronization
+✅ Workflow fix: Resolved documented auto-sync issues in project workflow
+```
+
+**🎯 Technical Validation:**
+- **Pattern Discovery**: Interactive demo now finds pattern matches with appropriate confidence scoring
+- **Class Balance**: Weighted training compensates for severe positive/negative sample imbalance
+- **User Control**: Interactive threshold adjustment allows precision vs recall trade-off optimization
+- **File Synchronization**: Both .py and .ipynb files contain identical functionality and stay synchronized
+- **Diagnostic Feedback**: Users receive clear guidance on improving pattern examples and understanding results
+
+**🚀 User Experience Impact:**
+- **Interactive Control**: Real-time confidence threshold adjustment with immediate feedback
+- **Better Results**: Lower default threshold increases pattern discovery success rate
+- **Clear Guidance**: Comprehensive diagnostic tips when no patterns are found
+- **Synchronized Workflow**: Seamless editing in either .py or .ipynb format with automatic sync
+- **Enhanced Debugging**: Sample predictions and training data analysis for troubleshooting
+
+**🔍 System Architecture Benefits:**
+- **Balanced Training**: Class weighting ensures fair representation despite sample imbalance
+- **Parameter Optimization**: Simplified model configuration prevents overfitting with limited data
+- **User Adaptability**: Adjustable confidence threshold accommodates different use cases
+- **File Consistency**: Jupytext auto-sync maintains code consistency across formats
+- **Diagnostic Infrastructure**: Built-in troubleshooting and feedback mechanisms for user guidance
+
 ### 2025-01-22: Data Fetcher Enhancement & Interactive Demo Critical Fixes
 
 **🔧 System Improvements:**
