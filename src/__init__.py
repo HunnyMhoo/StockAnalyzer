@@ -65,6 +65,34 @@ from .technical_indicators import (
     calculate_drawdown_metrics,
 )
 
+# Import interactive pattern analysis modules
+from .interactive_pattern_analyzer import (
+    InteractivePatternAnalyzer,
+    PatternAnalysisConfig,
+    PatternAnalysisResult,
+    SimplePatternConfig
+)
+
+# Import data quality analysis modules
+from .data_quality_analyzer import (
+    DataQualityAnalyzer,
+    DataQualitySummary,
+    show_enhanced_data_summary,
+    quick_quality_check
+)
+
+# Import notebook widget utilities (optional - may not be available in all environments)
+try:
+    from .notebook_widgets import (
+        PatternAnalysisUI,
+        WidgetConfig,
+        create_pattern_analysis_interface,
+        create_simple_input_form
+    )
+    _HAS_WIDGETS = True
+except ImportError:
+    _HAS_WIDGETS = False
+
 # Public API
 __all__ = [
     # Data fetching
@@ -106,7 +134,28 @@ __all__ = [
     "calculate_linear_trend_slope",
     "detect_false_support_break",
     "calculate_drawdown_metrics",
+
+    # Interactive pattern analysis
+    "InteractivePatternAnalyzer",
+    "PatternAnalysisConfig",
+    "PatternAnalysisResult",
+    "SimplePatternConfig",
+
+    # Data quality analysis
+    "DataQualityAnalyzer",
+    "DataQualitySummary",
+    "show_enhanced_data_summary",
+    "quick_quality_check",
 ]
+
+# Add widget exports if available
+if _HAS_WIDGETS:
+    __all__.extend([
+        "PatternAnalysisUI",
+        "WidgetConfig", 
+        "create_pattern_analysis_interface",
+        "create_simple_input_form"
+    ])
 
 # Add visualization exports if available
 if _HAS_VISUALIZATION:
