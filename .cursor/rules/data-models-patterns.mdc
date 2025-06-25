@@ -1,84 +1,76 @@
 ---
-description: Documentation of core pattern data structures, classifications, and relationships in HK stock trading pattern detection
-globs: src/**,notebooks/**,examples/**,test_**,scripts/**
+description: Documents pattern data structures, categorization, feature sets, and label classifications for stock market analysis.
+globs: 
 alwaysApply: false
 ---
 
 
 # data-models-patterns
 
-## Core Pattern Structure (Importance: 95)
+## Pattern Data Structures
 
-Pattern detection focuses on 4 key feature categories with 18 technical indicators:
+### Core Pattern Classifications
+- Positive patterns: Exemplar trading patterns marked for replication
+- Negative patterns: Counter-examples of invalid/undesired patterns 
+- Neutral patterns: Baseline cases for model comparison
 
-1. Trend Context Features
+### Pattern Features (18 Technical Indicators)
+
+1. Trend Context (4 features)
 - prior_trend_return
-- above_sma_50_ratio 
+- above_sma_50_ratio  
 - trend_angle
-- SMA relationships
-- Volume ratios
-- Returns and momentum
+- up_day_ratio
 
-2. Support Break Analysis
-- support_level_pct
-- break_depth
-- recovery_validation
-- volume_confirmation
-
-3. Correction Phase Metrics
-- drawdown_percentage
-- recovery_return
+2. Correction Phase (5 features)
+- drawdown_pct
+- recovery_return_pct
 - down_day_ratio
-- correction_length
-- volume_behavior
+- correction_duration
+- volume_during_correction
 
-4. Technical Indicators
-- Custom RSI implementation
-- MACD divergence
-- Multi-timeframe SMAs
-- Bollinger analysis
+3. False Support Break (4 features)
+- support_level
+- support_break_depth_pct
+- false_break_flag
+- recovery_days
 
-## Pattern Classifications (Importance: 90)
+4. Technical Indicators (5 features)
+- sma_5/10/20 crossovers
+- rsi_14
+- macd_diff
 
-Label Types:
-- Positive: Valid bull trend → dip → false resistance break patterns
-- Negative: Non-qualifying patterns
-- Neutral: Inconclusive patterns requiring further analysis
+### Pattern Labels
+- Success: Pattern matched expected outcome
+- Failure: Pattern did not match expected outcome
+- Uncertain: Insufficient data to determine outcome
 
-Pattern Requirements:
-- Minimum 5-day pattern length
-- Maximum 20-day window
-- Prior context period of 30 days
-- Volume confirmation thresholds
+### Pattern Match Confidence Bands
+- High confidence: >= 0.8
+- Medium confidence: 0.6 - 0.8 
+- Low confidence: < 0.6
 
-## Confidence Scoring (Importance: 85)
+### Pattern Scanning Parameters
+- Window size: 5-30 days
+- Context days: 10-60 days prior
+- Support lookback: 20-120 days
+- Minimum confidence: 0.7 default
 
-Three-tier classification system:
-- High: ≥0.8 confidence
-- Medium: 0.6-0.8 confidence  
-- Low: <0.6 confidence
+### Quality Metrics
+- Data completeness score (0-1)
+- Feature availability ratio (0-1) 
+- Valid date range check
+- Minimum volume threshold
 
-Feature importance weighting across categories:
-- Trend Context: 35%
-- Support Break: 25%
-- Correction Phase: 25%
-- Technical: 15%
+### Pattern File Organization
+- Pattern label JSON files
+- Feature CSV export files
+- Match results with timestamps
+- Tagged outcomes by confidence band
 
-## Data Relationships (Importance: 80)
-
-Pattern Components:
-- ticker: XXXX.HK format
-- window_start_date: Pattern start
-- window_end_date: Pattern completion
-- confidence_score: 0.0-1.0 range
-- features: 18 technical metrics
-- label_type: positive/negative/neutral
-- validation_flags: Support/volume confirmations
-- outcome_tracking: Success/failure record
-
-Key Files:
-- src/feature_extractor.py
-- src/pattern_model_trainer.py
+Key File Paths:
+- src/pattern_labeler.py
+- src/feature_extractor.py  
 - src/pattern_scanner.py
 - notebooks/04_feature_extraction.ipynb
 

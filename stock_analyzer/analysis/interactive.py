@@ -60,21 +60,24 @@ class SimplePatternConfig:
 
 class InteractivePatternAnalyzer:
     """
-    Enhanced pattern analyzer for interactive pattern similarity detection.
+    Main class for interactive pattern analysis.
     
-    This class provides a streamlined interface for:
-    - Validating positive and negative pattern examples
-    - Training temporary models for pattern detection
-    - Scanning market data for similar patterns
-    - Processing and ranking results by confidence
+    Provides functionality to:
+    1. Analyze user-defined positive patterns
+    2. Train temporary models using negative examples
+    3. Scan market for similar patterns
+    4. Return ranked results with confidence scores
     """
     
     def __init__(self, feature_extractor: Optional[FeatureExtractor] = None):
-        """Initialize the analyzer with optional feature extractor."""
+        """
+        Initialize the analyzer.
+        
+        Args:
+            feature_extractor: Optional custom feature extractor
+        """
         self.feature_extractor = feature_extractor or FeatureExtractor()
         self.temp_model_path = "temp_model.joblib"
-        # Cache for scanner instances to prevent multiple instantiations
-        self._scanner_cache = {}
         
     def analyze_pattern_similarity(self, 
                                  positive_ticker: str,
@@ -153,8 +156,6 @@ class InteractivePatternAnalyzer:
             # Clean up temporary model file
             if os.path.exists(self.temp_model_path):
                 os.remove(self.temp_model_path)
-            # Clear scanner cache to prevent memory leaks
-            self._scanner_cache.clear()
     
     def _validate_inputs(self, positive_ticker: str, start_date_str: str, 
                         end_date_str: str, negative_tickers_str: str) -> Tuple[Dict, List[str]]:
@@ -398,38 +399,10 @@ class InteractivePatternAnalyzer:
             print(f"📊 Found {len(all_available_stocks)} stocks with cached data")
             print(f"🔎 Scanning {len(scan_list)} stocks for similar patterns...")
         
-        # Use cached scanner or create new one (with output suppression)
-        scanner_key = self.temp_model_path
-        if scanner_key not in self._scanner_cache:
-            # Comprehensive output suppression for scanner initialization
-            import sys
-            import os
-            
-            # Store original stdout/stderr
-            old_stdout = sys.stdout
-            old_stderr = sys.stderr
-            
-            # Create devnull for complete suppression
-            devnull = open(os.devnull, 'w')
-            
-            try:
-                # Redirect all output to devnull during scanner creation
-                sys.stdout = devnull
-                sys.stderr = devnull
-                
-                # Initialize scanner (this will load the model silently)
-                scanner = PatternScanner(model_path=self.temp_model_path)
-                self._scanner_cache[scanner_key] = scanner
-                
-            finally:
-                # Always restore original stdout/stderr
-                sys.stdout = old_stdout
-                sys.stderr = old_stderr
-                devnull.close()
+        # Initialize scanner and run scan
+        scanner = PatternScanner(model_path=self.temp_model_path)
         
-        scanner = self._scanner_cache[scanner_key]
-        
-        # Comprehensive output suppression for scanning
+        # Comprehensive output suppression
         import sys
         import os
         from io import StringIO

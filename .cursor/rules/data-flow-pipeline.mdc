@@ -1,89 +1,66 @@
 ---
-description: Documents data flow between components for Hong Kong stock pattern recognition system
-globs: *.py,*.ipynb,src/*,notebooks/*,examples/*
+description: Documents the data flow between components from collection through feature extraction, pattern labeling, model training and evaluation for Hong Kong stock analysis.
+globs: src/**,notebooks/**,stock_analyzer/**
 alwaysApply: false
 ---
 
 
 # data-flow-pipeline
 
-The data pipeline consists of 5 major stages connecting data collection through pattern detection:
+The data pipeline consists of several key stages for processing Hong Kong stock data:
 
-1. Data Collection Stage
-Input: Hong Kong stock tickers (.HK format)
-Processing:
-- Bulk data fetcher (src/bulk_data_fetcher.py):
-  - Sector-based collection (tech, finance, property)
-  - Tiered batch sizing (5-50 stocks)
-  - Intelligent caching with 7-day freshness
-Output: Raw OHLCV data for HK stocks
+## 1. Data Collection Stage
+- **Bulk Collection Pipeline**
+  - Fetches Hong Kong stock data in configurable batches with rate limiting
+  - Implements sector-based collection (Tech, Finance, Property)
+  - Provides intelligent caching with incremental updates
+  - Files: `notebooks/02_bulk_data_collection.py`, `src/bulk_data_fetcher.py`
 
-2. Feature Extraction Stage
-Input: Raw OHLCV data
-Processing:
-- Feature extractor (src/feature_extractor.py):
-  - 18+ technical indicators across 4 categories
-  - Window-based calculation (20-30 days)
-  - Pattern-specific feature generation
-Output: Normalized feature vectors
+## 2. Feature Extraction Stage
+- **Pattern Feature Pipeline**
+  - Extracts 18+ numerical features across 4 categories:
+    - Trend Context: prior_trend_return, above_sma_50_ratio, trend_angle
+    - Correction Phase: drawdown_pct, recovery_return_pct, down_day_ratio
+    - False Support Break: support_level, break_depth_pct, recovery metrics
+    - Technical Indicators: SMAs, RSI, MACD, volatility
+  - Files: `notebooks/04_feature_extraction.py`, `src/feature_extractor.py`
 
-3. Pattern Labeling Stage 
-Input: Feature vectors + expert knowledge
-Processing:
-- Pattern labeler (src/pattern_labeler.py):
-  - Manual pattern identification
-  - Positive/negative classification
-  - Date range validation
-Output: Labeled pattern instances
+## 3. Pattern Labeling Stage
+- **Manual Pattern Tagging**
+  - Labels patterns as positive/negative/neutral examples
+  - Validates pattern structure and date ranges
+  - Stores labeled patterns with metadata
+  - Files: `stock_analyzer/patterns/labeler.py`
 
-4. Model Training Stage
-Input: Labeled patterns
-Processing:
-- Model trainer (src/pattern_model_trainer.py):
-  - SMOTE balancing for pattern classes
-  - XGBoost/RandomForest optimization
-  - Cross-validation for pattern reliability
-Output: Trained pattern detection models
+## 4. Model Training Stage
+- **Pattern Recognition Pipeline**
+  - Trains models on labeled patterns using extracted features
+  - Implements training workflows for XGBoost and RandomForest
+  - Cross-validates models with domain-specific metrics
+  - Files: `notebooks/05_pattern_model_training.py`, `src/pattern_model_trainer.py`
 
-5. Pattern Scanning Stage
-Input: New market data + trained models
-Processing:
-- Pattern scanner (src/pattern_scanner.py):
-  - Sliding window pattern detection
-  - Confidence scoring (0.5-0.8 threshold)
-  - Multi-model consensus
-Output: Pattern matches with confidence scores
+## 5. Pattern Scanning Stage
+- **Market Scanning Pipeline**
+  - Scans Hong Kong stocks using trained models
+  - Implements sliding window pattern detection
+  - Ranks matches by confidence score
+  - Files: `notebooks/06_pattern_scanning.py`, `src/pattern_scanner.py`
 
-Key Data Flow Integration Points:
+## 6. Result Evaluation Stage 
+- **Outcome Analysis Pipeline**
+  - Tags pattern match outcomes (success/failure)
+  - Analyzes performance by confidence bands
+  - Generates feedback for model improvement
+  - Files: `src/signal_outcome_tagger.py`, `stock_analyzer/analysis/outcome.py`
 
-1. Collection → Feature Extraction
-- Cached data handoff
-- Missing data validation
-- HK market format verification
+## 7. Model Evaluation Stage
+- **Performance Analysis Pipeline**
+  - Calculates pattern detection metrics
+  - Analyzes misclassifications
+  - Studies prediction confidence distribution
+  - Files: `src/model_evaluator.py`, `stock_analyzer/analysis/evaluator.py`
 
-2. Feature Extraction → Pattern Labeling
-- Feature vector standardization
-- Window alignment
-- Technical indicator calculation
-
-3. Pattern Labeling → Model Training
-- Label balancing
-- Feature selection
-- Cross-validation splits
-
-4. Model Training → Pattern Scanning
-- Model persistence
-- Feature scaling preservation
-- Confidence calibration
-
-The pipeline emphasizes data integrity and validation specific to Hong Kong market characteristics throughout each stage while maintaining pattern detection accuracy.
-
-Importance Scores:
-- Data Collection: 85 (Critical market data acquisition)
-- Feature Extraction: 90 (Core pattern recognition)
-- Pattern Labeling: 95 (Expert knowledge capture)
-- Model Training: 80 (Pattern learning)
-- Pattern Scanning: 85 (Production pattern detection)
+The pipeline integrates specialized components for Hong Kong stock analysis, maintaining data quality and model performance through systematic feedback loops.
 
 $END$
 

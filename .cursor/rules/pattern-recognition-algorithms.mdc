@@ -1,62 +1,71 @@
 ---
-description: Technical specification for pattern recognition algorithms in stock trading, focusing on trend analysis and support break detection
-globs: **/pattern*.{py,ipynb},**/feature*.{py,ipynb},**/model*.{py,ipynb},**/technical*.{py,ipynb}
+description: Specifies requirements and implementations for stock market pattern recognition algorithms and technical analysis
+globs: **/pattern*.{py,ipynb},**/analysis/*.py,**/features/*.py,**/indicators.py
 alwaysApply: false
 ---
 
 
 # pattern-recognition-algorithms
 
-Core Feature Categories:
+## Core Pattern Recognition Components
 
-1. Trend Context Analysis (90/100)
-- Prior trend return calculation over configurable windows 
-- SMA-50 ratio analysis for trend positioning
-- Trend angle measurement using regression
-- Returns 6 trend-specific indicators
+### False Breakout Detection
+- Identifies bull trend → dip → false resistance break patterns
+- Requires 2% minimum upward trend and 2% break threshold
+- Validates using 3-day recovery period
+- Uses 30-day lookback window for pattern context
 
-2. Support Break Detection (95/100)
-- Identifies support levels from historical price data
-- Measures break depth percentages
-- False break validation with recovery confirmation
-- Volume behavior tracking during recoveries
-- Produces 3 support-related metrics
+### Support/Resistance Analysis
+- Dynamic support/resistance level identification using local minima/maxima
+- False breakout validation using percentage-based thresholds
+- Recent support level tracking with configurable lookback periods
+- Break depth calculation with recovery volume analysis
 
-3. Correction Phase Analysis (85/100)
-- Drawdown percentage calculation 
-- Recovery metrics computation
-- Down day ratio tracking
-- Generates 5 correction indicators
+### Technical Pattern Features
+- RSI momentum analysis with custom windows
+- MACD trend detection with configurable fast/slow periods
+- Bollinger Bands volatility analysis with dynamic multipliers
+- Custom trend strength using linear regression slopes
+- Volume-to-average ratio for trading activity validation
 
-4. Technical Signal Integration (75/100)
-- Multiple SMA combinations (5/10/20)
-- RSI-14 implementation
-- MACD divergence computation
-- Volume ratio analysis
-- Outputs 4 technical metrics
+### Pattern Scanning Workflow
+- Sliding window pattern detection across multiple stocks
+- Feature extraction aligned with model training
+- Confidence score filtering with configurable thresholds
+- Multi-stock parallel scanning with rate limiting
+- Results ranking by confidence scores
 
-Key Pattern Recognition Rules:
-- Minimum 5-day window requirement
-- Support level confirmation logic
-- Volume confirmation for breakouts
-- Pattern window sizing (20-day default)
-- Confidence thresholds (0.6-0.8)
+### Signal Outcome Tagging
+- Pattern match outcome tracking (success/failure/uncertain)
+- Confidence band performance analysis 
+- Tagged feedback integration into model training
+- Historical match analysis for accuracy validation
 
-Validation Requirements:
-- OHLCV data completeness checks
-- Lookback period validation
-- Support level confirmation rules
-- Pattern overlap detection
-- Minimum sample size (30) for training
+### Pattern Visualization
+- Detection window highlighting with support levels
+- Volume subplot integration for pattern validation
+- Confidence score filtering and match prioritization
+- Custom technical overlay visualization
 
-Pattern Classification:
-- Three-tier confidence bands:
-  - High: ≥0.8
-  - Medium: 0.6-0.8
-  - Low: <0.6
-- Binary classification (positive/negative)
-- Pattern-specific feature extraction
-- Multi-timeframe confirmation
+## Domain-Specific Validation
+
+### Stock Pattern Validation
+- Minimum 5-day pattern length requirement
+- Hong Kong stock ticker format validation (XXXX.HK)
+- Support break depth percentage thresholds
+- Recovery period validation rules
+
+### Quality Assessment
+- Three-tier quality classification (high/medium/low)
+- 50% high quality requirement for scanning
+- 7-day data freshness threshold
+- Stock universe size tier requirements
+
+### Pattern Training Data
+- Positive/negative example pattern pairs
+- Label type validation (positive/negative/neutral)
+- Pattern date range integrity checks
+- Stock universe sector categorization
 
 $END$
 

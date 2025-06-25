@@ -2,6 +2,10 @@
 yfinance>=0.2.18
 pandas>=1.5.0
 
+# Configuration management
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+
 # Jupyter notebook environment
 jupyter>=1.0.0
 notebook>=6.4.0

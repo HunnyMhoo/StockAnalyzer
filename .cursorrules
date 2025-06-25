@@ -1,3 +1,34 @@
+# === USER INSTRUCTIONS ===
+## Notebook and Python File Priority Rules
+**CRITICAL: Always prioritize .py files over .ipynb files for all modifications and creation.**
+### File Modification Priority:
+1. **Primary Target**: Always modify or create `.py` files in the `notebooks/` directory
+2. **Secondary**: Only modify `.ipynb` files if explicitly requested or if no `.py` equivalent exists
+3. **Sync Requirement**: When modifying `.py` files, mention that Jupytext will auto-sync to `.ipynb`
+### Specific Rules:
+- **Code Changes**: Always edit the `.py` version (e.g., `notebooks/06_interactive_demo.py`)
+- **New Notebooks**: Create `.py` files with Jupytext format (`# %%` cell markers)
+- **Function Updates**: Modify functions in `.py` files, not `.ipynb` files
+- **Bug Fixes**: Apply fixes to `.py` files to ensure version control consistency
+- **Documentation**: Update code comments and docstrings in `.py` files
+### Jupytext Format Requirements:
+- Use `# %%` for code cells
+- Use `# %% [markdown]` for markdown cells
+- Include proper Jupytext header with metadata
+- Maintain cell structure compatible with notebook conversion
+### Rationale:
+- `.py` files are git-friendly and avoid merge conflicts
+- Jupytext automatically syncs changes to `.ipynb` files
+- Better code review and version control
+- Consistent with established project workflow
+- Supports CI/CD pipeline with Papermill
+**Exception**: Only modify `.ipynb` files directly when:
+- User explicitly requests `.ipynb` modification
+- Debugging notebook-specific execution issues
+- Working with notebook-only features (widgets, interactive outputs)
+# === END USER INSTRUCTIONS ===
+
+
 # main-overview
 
 ## Development Guidelines
@@ -8,82 +39,48 @@
 - Always provide a complete PLAN with REASONING based on evidence from code and logs before making changes.
 - Explain your OBSERVATIONS clearly, then provide REASONING to identify the exact issue. Add console logs when needed to gather more information.
 
-## Notebook and Python File Priority Rules
 
-**CRITICAL: Always prioritize .py files over .ipynb files for all modifications and creation.**
+The Hong Kong Stock Pattern Analysis System consists of several core business domains:
 
-### File Modification Priority:
-1. **Primary Target**: Always modify or create `.py` files in the `notebooks/` directory
-2. **Secondary**: Only modify `.ipynb` files if explicitly requested or if no `.py` equivalent exists
-3. **Sync Requirement**: When modifying `.py` files, mention that Jupytext will auto-sync to `.ipynb`
+1. Pattern Recognition Engine (70-89)
+- Detects and validates trading patterns using machine learning models
+- Implements specialized false breakout detection algorithms
+- Handles pattern labeling with custom validation rules
+- File: `src/pattern_scanner.py`
 
-### Specific Rules:
-- **Code Changes**: Always edit the `.py` version (e.g., `notebooks/06_interactive_demo.py`)
-- **New Notebooks**: Create `.py` files with Jupytext format (`# %%` cell markers)
-- **Function Updates**: Modify functions in `.py` files, not `.ipynb` files
-- **Bug Fixes**: Apply fixes to `.py` files to ensure version control consistency
-- **Documentation**: Update code comments and docstrings in `.py` files
+2. Bulk Data Collection System (90-100)
+- Sector-based stock selection for Hong Kong market
+- Intelligent caching with incremental updates
+- Rate-limited batch processing with retry logic
+- Custom data quality validation for financial metrics
+- File: `src/bulk_data_fetcher.py`
 
-### Jupytext Format Requirements:
-- Use `# %%` for code cells
-- Use `# %% [markdown]` for markdown cells
-- Include proper Jupytext header with metadata
-- Maintain cell structure compatible with notebook conversion
+3. Technical Analysis Engine (70-89)
+- Custom support/resistance level detection
+- Volume-price relationship analysis
+- Drawdown metrics calculation
+- Market-specific trend analysis
+- File: `src/technical_indicators.py`
 
-### Rationale:
-- `.py` files are git-friendly and avoid merge conflicts
-- Jupytext automatically syncs changes to `.ipynb` files
-- Better code review and version control
-- Consistent with established project workflow
-- Supports CI/CD pipeline with Papermill
+4. Feature Extraction Pipeline (90-100)
+- Window-based extraction of 18+ technical features
+- Support/resistance break detection
+- Custom validation for Hong Kong market data
+- File: `src/feature_extractor.py`
 
-**Exception**: Only modify `.ipynb` files directly when:
-- User explicitly requests `.ipynb` modification
-- Debugging notebook-specific execution issues
-- Working with notebook-only features (widgets, interactive outputs)
+5. Pattern Model Training System (70-89)
+- Specialized model training for pattern detection
+- Feedback loop with signal outcome tracking
+- Custom evaluation metrics for trading patterns
+- File: `src/pattern_model_trainer.py`
 
-Hong Kong Stock Pattern Recognition System
+6. Interactive Analysis Interface (40-69)
+- Real-time pattern matching visualization
+- Confidence-based filtering system
+- Batch visualization capabilities
+- File: `notebooks/06_interactive_demo.py`
 
-Core Components:
-
-1. Pattern Detection Engine (90)
-- Specialized detection of "bull trend → dip → false resistance break" patterns
-- 18+ technical indicators across 4 categories (trend, correction, support break, technical)
-- Confidence-based pattern matching with thresholds (0.6-0.8)
-- Hong Kong market-specific validation rules
-Key files: src/pattern_scanner.py, src/feature_extractor.py
-
-2. Stock Data Management (85)
-- Four-tier collection framework:
-  * Beginner: 10-50 stocks with safe rate limits
-  * Intermediate: 50-200 stocks with sector focus
-  * Advanced: 200-500 stocks for market coverage
-  * Enterprise: 500+ parallel processing
-- HK-specific ticker validation (XXXX.HK format)
-Key files: src/bulk_data_fetcher.py, src/data_fetcher.py
-
-3. Pattern Training Pipeline (80)
-- Manual pattern tagging system with date range validation
-- Feature extraction across trend context, correction phase, support breaks
-- Model training with SMOTE balancing for pattern distributions
-- Cross-validation specific to time series patterns
-Key files: src/pattern_model_trainer.py
-
-4. Signal Outcome Analysis (75)
-- Three-tier confidence classification (High ≥0.8, Medium 0.6-0.8, Low <0.6)
-- Success/failure tracking with feedback loop
-- Pattern performance metrics by confidence bands
-- Trading signal quality validation
-Key files: src/signal_outcome_tagger.py
-
-5. Technical Indicator Framework (70)
-- Support/resistance break validation
-- Volume confirmation requirements
-- False breakout detection with recovery validation 
-- Pattern-specific technical measurements
-Key files: src/technical_indicators.py
-
-Data flows through collection → feature extraction → pattern detection → signal validation, with market-specific rules and validations at each stage focused on Hong Kong exchange requirements and trading patterns.
+The system implements specialized workflows for Hong Kong stock market analysis, focusing on pattern detection, validation, and trading signal generation through a combination of technical analysis and machine learning approaches.
 
 $END$
 

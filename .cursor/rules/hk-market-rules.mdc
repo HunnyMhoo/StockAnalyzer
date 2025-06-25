@@ -1,5 +1,5 @@
 ---
-description: Hong Kong stock market-specific business rules and validation requirements for pattern detection and trading analysis
+description: Rules and validation criteria specific to Hong Kong stock market data processing and pattern analysis
 globs: 
 alwaysApply: false
 ---
@@ -7,59 +7,64 @@ alwaysApply: false
 
 # hk-market-rules
 
-## Key Market Rules (Score: 95)
+### Stock Pattern Recognition Framework
+1. **Pattern Labeling Standards**
+- Enforces Hong Kong stock ticker format validation (XXXX.HK)  
+- Requires minimum pattern length of 5 days
+- Classifies patterns as positive/negative/neutral
+- Support break thresholds calibrated to HK market volatility (2% default)
 
-1. Stock Pattern Recognition Requirements
-- Pattern window size: 15-30 days for HK markets
-- Minimum data requirements: 5 trading days
-- Support level validation periods: 10-20 days
-- False breakout confirmation: 3+ day recovery validation
+2. **Data Quality Requirements**
+- Minimum data freshness of 7 days
+- Coverage criteria:
+  - Large universe: ≥100 stocks
+  - Good coverage: ≥50 stocks
+  - Moderate: ≥20 stocks
+  - Limited: <20 stocks
+- Quality scoring tiers:
+  - High: ≥0.8 score
+  - Medium: ≥0.6 score
+  - Low: <0.6 score
 
-2. Stock Identifier Validation
-- Format: XXXX.HK (4-digit code)
-- Range: 0001-9999 with active ranges prioritized
+3. **Market Sector Organization**
+- Blue chips (major established companies)
+- Tech stocks (technology/internet)
+- Finance (banks/insurance) 
+- Property (real estate developers)
+
+4. **Pattern Recognition Rules**
+- False breakout validation:
+  - 2% minimum upward trend requirement
+  - 2% support level break threshold
+  - 3-day recovery period validation
+  - 10-day trend establishment period
+  - 30-day lookback for pattern context
+
+5. **Data Collection Policies**
+- Batch size: 20 stocks maximum
+- 2-second delay between batches
+- 3 retry attempts per stock
 - Market cap threshold: 1B HKD minimum
-- Sector categorization required
+- Sector-based collection limits:
+  - Tech: 25-50 stocks
+  - Finance: 25-50 stocks
+  - Property: 25-50 stocks
 
-## Pattern Detection Criteria (Score: 90)
+6. **Pattern Matching Criteria**
+- Minimum confidence threshold: 0.7
+- Required positive pattern example
+- Multiple negative pattern examples
+- Enhanced validation for high-confidence matches (>0.9)
+- Sector-specific matching adjustments
 
-1. Pattern Match Rules
-- Primary confidence threshold: 0.75
-- Secondary scan threshold: 0.60
-- Maximum windows per ticker: 2-4
-- Sector-specific scanning parameters:
-  * Tech stocks: 25-day window, 35-day context
-  * Blue chips: 30-day window, standard confidence
-  * Property/Finance: 20-day window, higher thresholds
-
-## Market Data Requirements (Score: 85)
-
-1. Data Freshness Rules
-- Cache validity: 7 days maximum
-- Real-time updates during HK trading hours
-- Pre/post market data inclusion optional
-- Minimum 180-day historical data for pattern training
-
-2. Volume Requirements
-- Volume ratio validation against 20-day average
-- Minimum trading volume thresholds by sector
-- Volume spike validation for pattern confirmation
-
-## Implementation Files
-
-Core Market Rule Implementation:
-- src/hk_stock_universe.py
-- src/pattern_scanner.py
-- notebooks/06_pattern_scanning.py
-
-Pattern Detection:
-- src/pattern_labeler.py
-- src/feature_extractor.py
-- notebooks/04_feature_extraction.py
-
-Market Data Handling:
-- src/bulk_data_fetcher.py
-- src/data_fetcher.py
+### File Paths:
+- `src/pattern_labeler.py`
+- `src/data_quality_analyzer.py` 
+- `src/hk_stock_universe.py`
+- `src/pattern_scanner.py`
+- `src/bulk_data_fetcher.py`
+- `stock_analyzer/patterns/labeler.py`
+- `stock_analyzer/analysis/quality.py`
 
 $END$
 
