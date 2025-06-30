@@ -11,6 +11,8 @@ from typing import Optional, Tuple, Union
 from scipy.signal import argrelextrema
 import warnings
 
+from ..config import settings
+
 
 def simple_moving_average(data: pd.Series, window: int) -> pd.Series:
     """
@@ -46,17 +48,20 @@ def exponential_moving_average(data: pd.Series, window: int) -> pd.Series:
     return data.ewm(span=window, adjust=False).mean()
 
 
-def relative_strength_index(data: pd.Series, window: int = 14) -> pd.Series:
+def relative_strength_index(data: pd.Series, window: Optional[int] = None) -> pd.Series:
     """
     Calculate Relative Strength Index (RSI).
     
     Args:
         data: Price series (typically Close prices)
-        window: Period for RSI calculation (default: 14)
+        window: Period for RSI calculation (default: from config)
         
     Returns:
         pd.Series: RSI values (0-100)
     """
+    if window is None:
+        window = settings.RSI_PERIOD
+    
     if len(data) < window + 1:
         return pd.Series(index=data.index, dtype=float)
     
@@ -111,18 +116,23 @@ def macd(data: pd.Series, fast: int = 12, slow: int = 26, signal: int = 9) -> Tu
     return macd_line, signal_line, histogram
 
 
-def bollinger_bands(data: pd.Series, window: int = 20, num_std: float = 2.0) -> Tuple[pd.Series, pd.Series, pd.Series]:
+def bollinger_bands(data: pd.Series, window: Optional[int] = None, num_std: Optional[float] = None) -> Tuple[pd.Series, pd.Series, pd.Series]:
     """
     Calculate Bollinger Bands.
     
     Args:
         data: Price series (typically Close prices)
-        window: Period for moving average (default: 20)
-        num_std: Number of standard deviations (default: 2.0)
+        window: Period for moving average (default: from config)
+        num_std: Number of standard deviations (default: from config)
         
     Returns:
         Tuple of (Upper band, Middle band/SMA, Lower band)
     """
+    if window is None:
+        window = settings.BOLLINGER_WINDOW
+    if num_std is None:
+        num_std = settings.BOLLINGER_STD_DEV
+    
     if len(data) < window:
         empty_series = pd.Series(index=data.index, dtype=float)
         return empty_series, empty_series, empty_series
@@ -140,7 +150,7 @@ def bollinger_bands(data: pd.Series, window: int = 20, num_std: float = 2.0) -> 
     return upper_band, middle_band, lower_band
 
 
-def average_true_range(high: pd.Series, low: pd.Series, close: pd.Series, window: int = 14) -> pd.Series:
+def average_true_range(high: pd.Series, low: pd.Series, close: pd.Series, window: Optional[int] = None) -> pd.Series:
     """
     Calculate Average True Range (ATR).
     
@@ -148,11 +158,14 @@ def average_true_range(high: pd.Series, low: pd.Series, close: pd.Series, window
         high: High price series
         low: Low price series
         close: Close price series
-        window: Period for ATR calculation (default: 14)
+        window: Period for ATR calculation (default: from config)
         
     Returns:
         pd.Series: ATR values
     """
+    if window is None:
+        window = settings.ATR_PERIOD
+    
     if len(high) < window + 1:
         return pd.Series(index=high.index, dtype=float)
     
@@ -170,17 +183,20 @@ def average_true_range(high: pd.Series, low: pd.Series, close: pd.Series, window
     return atr
 
 
-def price_volatility(data: pd.Series, window: int = 20) -> pd.Series:
+def price_volatility(data: pd.Series, window: Optional[int] = None) -> pd.Series:
     """
     Calculate price volatility (standard deviation of returns).
     
     Args:
         data: Price series (typically Close prices)
-        window: Period for volatility calculation (default: 20)
+        window: Period for volatility calculation (default: from config)
         
     Returns:
         pd.Series: Volatility values
     """
+    if window is None:
+        window = settings.VOLATILITY_WINDOW
+    
     if len(data) < window + 1:
         return pd.Series(index=data.index, dtype=float)
     
@@ -193,17 +209,20 @@ def price_volatility(data: pd.Series, window: int = 20) -> pd.Series:
     return volatility
 
 
-def volume_average_ratio(volume: pd.Series, window: int = 20) -> pd.Series:
+def volume_average_ratio(volume: pd.Series, window: Optional[int] = None) -> pd.Series:
     """
     Calculate volume to average volume ratio.
     
     Args:
         volume: Volume series
-        window: Period for average calculation (default: 20)
+        window: Period for average calculation (default: from config)
         
     Returns:
         pd.Series: Volume ratio values
     """
+    if window is None:
+        window = settings.VOLUME_AVERAGE_WINDOW
+    
     if len(volume) < window:
         return pd.Series(index=volume.index, dtype=float)
     
@@ -216,18 +235,23 @@ def volume_average_ratio(volume: pd.Series, window: int = 20) -> pd.Series:
     return volume_ratio
 
 
-def find_support_resistance_levels(data: pd.Series, window: int = 5, min_periods: int = 10) -> Tuple[pd.Series, pd.Series]:
+def find_support_resistance_levels(data: pd.Series, window: Optional[int] = None, min_periods: Optional[int] = None) -> Tuple[pd.Series, pd.Series]:
     """
     Find support and resistance levels using local minima and maxima.
     
     Args:
         data: Price series (typically Low for support, High for resistance)
-        window: Window size for local extrema detection (default: 5)
-        min_periods: Minimum periods required for calculation (default: 10)
+        window: Window size for local extrema detection (default: from config)
+        min_periods: Minimum periods required for calculation (default: from config)
         
     Returns:
         Tuple of (support_levels, resistance_levels)
     """
+    if window is None:
+        window = settings.SUPPORT_RESISTANCE_WINDOW
+    if min_periods is None:
+        min_periods = settings.SUPPORT_RESISTANCE_MIN_PERIODS
+    
     if len(data) < min_periods:
         empty_series = pd.Series(index=data.index, dtype=float)
         return empty_series, empty_series
@@ -282,17 +306,20 @@ def find_recent_support_level(low_prices: pd.Series, current_date_idx: int, look
     return float(lookback_period.min())
 
 
-def calculate_linear_trend_slope(data: pd.Series, window: int = 30) -> float:
+def calculate_linear_trend_slope(data: pd.Series, window: Optional[int] = None) -> float:
     """
     Calculate linear trend slope using least squares regression.
     
     Args:
         data: Price series
-        window: Number of periods to use for trend calculation
+        window: Number of periods to use for trend calculation (default: from config)
         
     Returns:
         float: Trend slope (positive = uptrend, negative = downtrend)
     """
+    if window is None:
+        window = settings.TREND_SLOPE_WINDOW
+    
     if len(data) < window:
         return 0.0
     

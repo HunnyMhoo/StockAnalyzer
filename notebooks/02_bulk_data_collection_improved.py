@@ -76,14 +76,14 @@ else:
 # Import Custom Modules and Improved Utilities
 try:
     # Core stock data modules
-    from hk_stock_universe import (
+    from stock_analyzer.data import (
         get_hk_stock_list_static,
         get_hk_stocks_by_sector,
         get_comprehensive_hk_stock_list,
         MAJOR_HK_STOCKS
     )
     
-    from bulk_data_fetcher import (
+    from stock_analyzer.data import (
         fetch_hk_stocks_bulk,
         fetch_all_major_hk_stocks,
         fetch_hk_tech_stocks,
@@ -92,7 +92,7 @@ try:
     )
     
     # Import the improved utilities we created
-    from bulk_collection_improved import (
+    from stock_analyzer.data import (
         BulkCollectionConfig,
         BulkCollector,
         ResultsManager,

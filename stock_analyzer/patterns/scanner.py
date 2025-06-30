@@ -17,23 +17,21 @@ import pandas as pd
 
 # Handle imports for both direct execution and package usage
 try:
-    from .feature_extractor import FeatureExtractor, FeatureExtractionError
-    from .pattern_model_trainer import load_trained_model, ModelTrainingError
-    from .data_fetcher import _load_cached_data
-    from .hk_stock_universe import get_hk_stock_list_static, get_top_hk_stocks
+    from ..features.extractor import FeatureExtractor, FeatureExtractionError
+    from ..analysis.trainer import load_trained_model, ModelTrainingError
+    from ..data.fetcher import _load_cached_data
+    from ..data.universe import get_hk_stock_list_static, get_top_hk_stocks
+    from ..config import settings
 except ImportError:
-    from feature_extractor import FeatureExtractor, FeatureExtractionError
-    from pattern_model_trainer import load_trained_model, ModelTrainingError
-    from data_fetcher import _load_cached_data
-    from hk_stock_universe import get_hk_stock_list_static, get_top_hk_stocks
+    from stock_analyzer.features.extractor import FeatureExtractor, FeatureExtractionError
+    from stock_analyzer.analysis.trainer import load_trained_model, ModelTrainingError
+    from stock_analyzer.data.fetcher import _load_cached_data
+    from stock_analyzer.data.universe import get_hk_stock_list_static, get_top_hk_stocks
+    from stock_analyzer.config import settings
 
 
 # Configuration constants
 SIGNALS_DIR = "signals"
-DEFAULT_WINDOW_SIZE = 30
-DEFAULT_MIN_CONFIDENCE = 0.70
-DEFAULT_MAX_WINDOWS_PER_TICKER = 5
-DEFAULT_TOP_MATCHES_DISPLAY = 5
 
 
 class PatternScanningError(Exception):
@@ -55,13 +53,22 @@ class ScanningConfig:
         output_filename: Custom output filename (auto-generated if None)
         include_feature_values: Whether to include feature values in output
     """
-    window_size: int = DEFAULT_WINDOW_SIZE
-    min_confidence: float = DEFAULT_MIN_CONFIDENCE
-    max_windows_per_ticker: int = DEFAULT_MAX_WINDOWS_PER_TICKER
-    top_matches_display: int = DEFAULT_TOP_MATCHES_DISPLAY
+    window_size: Optional[int] = None
+    min_confidence: Optional[float] = None
+    max_windows_per_ticker: Optional[int] = None
+    top_matches_display: int = 5
     save_results: bool = True
     output_filename: Optional[str] = None
     include_feature_values: bool = False
+    
+    def __post_init__(self):
+        """Set default values from settings if None provided."""
+        if self.window_size is None:
+            self.window_size = settings.DEFAULT_WINDOW_SIZE
+        if self.min_confidence is None:
+            self.min_confidence = settings.ALERT_THRESHOLD
+        if self.max_windows_per_ticker is None:
+            self.max_windows_per_ticker = settings.DEFAULT_MAX_WINDOWS_PER_TICKER
 
 
 @dataclass
@@ -144,7 +151,7 @@ class PatternScanner:
             
             # Initialize feature extractor with matching configuration
             extractor_config = {
-                'window_size': self.feature_extractor_config.get('window_size', DEFAULT_WINDOW_SIZE),
+                'window_size': self.feature_extractor_config.get('window_size', settings.DEFAULT_WINDOW_SIZE),
                 'prior_context_days': self.feature_extractor_config.get('prior_context_days', 30),
                 'support_lookback_days': self.feature_extractor_config.get('support_lookback_days', 10),
                 'output_dir': "temp_features"  # Temporary directory for feature extraction
@@ -426,7 +433,7 @@ class PatternScanner:
         """
         return {
             'total_tickers_scanned': len(tickers_scanned),
-            'total_windows_evaluated': len(tickers_scanned) * DEFAULT_MAX_WINDOWS_PER_TICKER,  # Approximate
+            'total_windows_evaluated': len(tickers_scanned) * settings.DEFAULT_MAX_WINDOWS_PER_TICKER,  # Approximate
             'matches_found': len(results_df),
             'scanning_time_seconds': scanning_time,
             'average_confidence': results_df['confidence_score'].mean() if not results_df.empty else 0.0,
@@ -575,9 +582,9 @@ class PatternScanner:
 
 def scan_hk_stocks_for_patterns(model_path: str,
                               ticker_list: Optional[List[str]] = None,
-                              window_size: int = DEFAULT_WINDOW_SIZE,
-                              min_confidence: float = DEFAULT_MIN_CONFIDENCE,
-                              max_windows_per_ticker: int = DEFAULT_MAX_WINDOWS_PER_TICKER,
+                              window_size: int = None,
+                              min_confidence: float = None,
+                              max_windows_per_ticker: int = None,
                               **kwargs) -> ScanningResults:
     """
     Convenience function for scanning HK stocks for patterns.

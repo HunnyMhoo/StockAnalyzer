@@ -15,7 +15,7 @@ from unittest.mock import patch, mock_open
 import pytest
 
 # Import the modules to test
-from src.pattern_labeler import (
+from stock_analyzer.patterns import (
     PatternLabel,
     LabelValidator,
     PatternLabeler,

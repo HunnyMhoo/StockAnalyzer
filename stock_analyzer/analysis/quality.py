@@ -19,7 +19,7 @@ from typing import List, Dict, Any, Optional, Tuple
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 
-from src.data_fetcher import validate_cached_data_file, get_all_cached_tickers
+from ..data.fetcher import validate_cached_data_file, get_all_cached_tickers
 
 
 @dataclass

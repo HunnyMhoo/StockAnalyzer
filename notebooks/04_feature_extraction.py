@@ -46,9 +46,9 @@ warnings.filterwarnings('ignore')
 sys.path.append('..')
 
 # Import our modules
-from src.feature_extractor import FeatureExtractor, extract_features_from_labels
-from src.pattern_labeler import PatternLabel, load_labeled_patterns
-from src.data_fetcher import fetch_hk_stocks, list_cached_tickers
+from stock_analyzer.features import FeatureExtractor, extract_features_from_labels
+from stock_analyzer.patterns import PatternLabel, load_labeled_patterns
+from stock_analyzer.data import fetch_hk_stocks, list_cached_tickers
 from IPython.display import display
 
 print("✅ All imports successful!")

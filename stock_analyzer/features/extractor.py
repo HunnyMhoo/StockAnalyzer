@@ -31,9 +31,9 @@ try:
         calculate_candle_patterns,
     )
 except ImportError:
-    from ..patterns.labeler import PatternLabel, load_labeled_patterns
-from ..data.fetcher import fetch_hk_stocks, _get_cache_filename, _load_cached_data
-from .indicators import (
+    from stock_analyzer.patterns.labeler import PatternLabel, load_labeled_patterns
+    from stock_analyzer.data.fetcher import fetch_hk_stocks, _get_cache_filename, _load_cached_data
+    from stock_analyzer.features.indicators import (
         simple_moving_average,
         relative_strength_index,
         macd,

@@ -1,11 +1,13 @@
 # ---
 # jupyter:
 #   jupytext:
+#     cell_metadata_filter: -all
+#     notebook_metadata_filter: all,-language_info,-toc,-latex_envs
 #     text_representation:
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.16.4
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -41,16 +43,16 @@ project_root = Path('.').resolve().parent
 sys.path.insert(0, str(project_root))
 
 # Core imports
-from src.data_fetcher import fetch_hk_stocks
-from src.feature_extractor import FeatureExtractor
-from src.pattern_scanner import PatternScanner, ScanningConfig
+from stock_analyzer.data import fetch_hk_stocks
+from stock_analyzer.features import FeatureExtractor
+from stock_analyzer.patterns import PatternScanner, ScanningConfig
 # PatternVisualizer import removed - not used in this refactored version
 from common_setup import *
 
 # New modular imports (refactored components)
-from src.data_quality_analyzer import DataQualityAnalyzer
-from src.interactive_pattern_analyzer import InteractivePatternAnalyzer, PatternAnalysisConfig
-from src.notebook_widgets import create_pattern_analysis_interface
+from stock_analyzer.analysis import DataQualityAnalyzer
+from stock_analyzer.analysis import InteractivePatternAnalyzer, PatternAnalysisConfig
+from stock_analyzer.utils import create_pattern_analysis_interface
 
 # UI imports
 try:
@@ -73,7 +75,7 @@ print("🎯 Interactive Pattern Analysis Demo Ready")
 # %%
 def show_enhanced_data_summary():
     """Enhanced data summary using the new DataQualityAnalyzer module"""
-    from src.data_quality_analyzer import show_enhanced_data_summary as analyzer_summary
+    from stock_analyzer.analysis import show_enhanced_data_summary as analyzer_summary
     return analyzer_summary()
 
 available_data = show_enhanced_data_summary()
@@ -89,25 +91,26 @@ class SimplePatternConfig:
 # %%
 # ENHANCED PATTERN ANALYSIS FUNCTION (REFACTORED)
 def find_similar_patterns_enhanced(positive_ticker, start_date_str, end_date_str, 
-                                 negative_tickers_str, min_confidence=0.7, 
-                                 max_stocks_to_scan=None, show_progress=True):
+                                 negative_tickers_str, config=None,
+                                 min_confidence=0.7, max_stocks_to_scan=None, show_progress=True):
     """
     Enhanced pattern analysis using the new InteractivePatternAnalyzer module.
     
     This function maintains the same interface as before but now uses the refactored
     business logic from the src.interactive_pattern_analyzer module.
     """
-    from src.interactive_pattern_analyzer import InteractivePatternAnalyzer, PatternAnalysisConfig
+    from stock_analyzer.analysis import InteractivePatternAnalyzer, PatternAnalysisConfig
     
     # Create analyzer instance
     analyzer = InteractivePatternAnalyzer()
     
-    # Create configuration
-    config = PatternAnalysisConfig(
-        min_confidence=min_confidence,
-        max_stocks_to_scan=max_stocks_to_scan,
-        show_progress=show_progress
-    )
+    # Create configuration (use provided config or create from legacy parameters)
+    if config is None:
+        config = PatternAnalysisConfig(
+            min_confidence=min_confidence,
+            max_stocks_to_scan=max_stocks_to_scan,
+            show_progress=show_progress
+        )
     
     # Run analysis
     result = analyzer.analyze_pattern_similarity(
@@ -139,7 +142,7 @@ def find_similar_patterns_enhanced(positive_ticker, start_date_str, end_date_str
 # ENHANCED USER INTERFACE (REFACTORED)
 def create_enhanced_interface():
     """Create enhanced UI interface using the new PatternAnalysisUI module"""
-    from src.notebook_widgets import create_pattern_analysis_interface
+    from stock_analyzer.utils import create_pattern_analysis_interface
     return create_pattern_analysis_interface(find_similar_patterns_enhanced)
 
 # %%
@@ -156,7 +159,7 @@ else:
 # ## 💡 Refactoring Summary
 #
 # **✅ Code Reduction**: 589 lines → 150 lines in notebook (74% reduction)
-# 
+#
 # **✅ Module Architecture**: 
 # - `src.interactive_pattern_analyzer`: Core business logic (457 lines)
 # - `src.data_quality_analyzer`: Data validation and quality checks (297 lines) 
@@ -183,7 +186,7 @@ if __name__ == "__main__":
     
     # Test data quality analyzer
     try:
-        from src.data_quality_analyzer import DataQualityAnalyzer
+        from stock_analyzer.analysis import DataQualityAnalyzer
         analyzer = DataQualityAnalyzer()
         print("✅ DataQualityAnalyzer imported successfully")
     except Exception as e:
@@ -191,7 +194,7 @@ if __name__ == "__main__":
     
     # Test pattern analyzer
     try:
-        from src.interactive_pattern_analyzer import InteractivePatternAnalyzer
+        from stock_analyzer.analysis import InteractivePatternAnalyzer
         pattern_analyzer = InteractivePatternAnalyzer()
         print("✅ InteractivePatternAnalyzer imported successfully")
     except Exception as e:
@@ -200,7 +203,7 @@ if __name__ == "__main__":
     # Test UI components
     if WIDGETS_AVAILABLE:
         try:
-            from src.notebook_widgets import PatternAnalysisUI
+            from stock_analyzer.utils import PatternAnalysisUI
             ui = PatternAnalysisUI()
             print("✅ PatternAnalysisUI imported successfully")
         except Exception as e:

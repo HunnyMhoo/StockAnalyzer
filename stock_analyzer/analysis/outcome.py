@@ -17,9 +17,15 @@ import numpy as np
 
 # Handle imports for both direct execution and package usage
 try:
-    from .pattern_visualizer import MatchVisualizationError
+    from ..visualization.charts import MatchVisualizationError
 except ImportError:
-    from pattern_visualizer import MatchVisualizationError
+    try:
+        from stock_analyzer.visualization.charts import MatchVisualizationError
+    except ImportError:
+        # Define a fallback error class if visualization module is not available
+        class MatchVisualizationError(Exception):
+            """Fallback error class for visualization errors."""
+            pass
 
 
 # Configuration constants

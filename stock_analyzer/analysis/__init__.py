@@ -26,10 +26,20 @@ from .outcome import (
 
 from .evaluator import (
     ModelEvaluator,
+    ModelEvaluationError,
+    quick_evaluate_model,
 )
+
+# Create alias for backward compatibility
+EvaluationResults = dict  # Results are returned as dictionaries
 
 from .trainer import (
     PatternModelTrainer,
+    TrainingConfig,
+    TrainingResults,
+    ModelTrainingError,
+    load_trained_model,
+    quick_train_model,
 )
 
 __all__ = [
@@ -54,5 +64,13 @@ __all__ = [
     
     # Model evaluation and training
     "ModelEvaluator",
+    "ModelEvaluationError", 
+    "EvaluationResults",
+    "quick_evaluate_model",
     "PatternModelTrainer",
+    "TrainingConfig",
+    "TrainingResults",
+    "ModelTrainingError",
+    "load_trained_model",
+    "quick_train_model",
 ] 

@@ -114,7 +114,9 @@ class PatternAnalysisUI:
         """
         defaults = defaults or {
             'min_confidence': 0.7,
-            'max_stocks': 100
+            'max_stocks': 100,
+            'negative_sampling': 'temporal_recent',
+            'stock_selection': 'random_diverse'
         }
         
         config_widgets = {
@@ -133,6 +135,30 @@ class PatternAnalysisUI:
                 description='Max Stocks to Scan:',
                 style={'description_width': self.config.description_width},
                 layout=widgets.Layout(width='200px')
+            ),
+            
+            'negative_sampling_dropdown': widgets.Dropdown(
+                options=[
+                    ('Recent Time Period (Recommended)', 'temporal_recent'),
+                    ('Multiple Time Windows', 'multiple_windows'),
+                    ('Random Sampling', 'random')
+                ],
+                value=defaults['negative_sampling'],
+                description='Negative Sampling:',
+                style={'description_width': self.config.description_width},
+                layout=widgets.Layout(width='300px')
+            ),
+            
+            'stock_selection_dropdown': widgets.Dropdown(
+                options=[
+                    ('Random Diverse (Recommended)', 'random_diverse'),
+                    ('Market Cap Balanced', 'market_cap_balanced'),
+                    ('Alphabetical Order', 'alphabetical')
+                ],
+                value=defaults['stock_selection'],
+                description='Stock Selection:',
+                style={'description_width': self.config.description_width},
+                layout=widgets.Layout(width='300px')
             )
         }
         
@@ -217,14 +243,24 @@ class PatternAnalysisUI:
                     # Minimal status update - no verbose logging
                     print("🔍 Analyzing pattern...")
                     
+                    # Create enhanced configuration
+                    from stock_analyzer.analysis import PatternAnalysisConfig
+                    
+                    enhanced_config = PatternAnalysisConfig(
+                        min_confidence=config_widgets['confidence_slider'].value,  # type: ignore
+                        max_stocks_to_scan=config_widgets['max_stocks_input'].value,  # type: ignore
+                        negative_sampling_strategy=config_widgets['negative_sampling_dropdown'].value,  # type: ignore
+                        stock_selection_strategy=config_widgets['stock_selection_dropdown'].value,  # type: ignore
+                        quiet_mode=True  # Reduce verbose output in UI
+                    )
+                    
                     # Call the analyzer function
                     result = analyzer_function(
                         positive_ticker=input_widgets['positive_ticker'].value.strip(),  # type: ignore
                         start_date_str=input_widgets['start_date'].value.strip(),  # type: ignore
                         end_date_str=input_widgets['end_date'].value.strip(),  # type: ignore
                         negative_tickers_str=input_widgets['negative_tickers'].value.strip(),  # type: ignore
-                        min_confidence=config_widgets['confidence_slider'].value,  # type: ignore
-                        max_stocks_to_scan=config_widgets['max_stocks_input'].value  # type: ignore
+                        config=enhanced_config
                     )
                     
                     # No verbose metadata output - results are handled by the analyzer function
@@ -263,6 +299,11 @@ class PatternAnalysisUI:
             widgets.HBox([
                 config_widgets['confidence_slider'], 
                 config_widgets['max_stocks_input']
+            ]),
+            widgets.HTML("<br><p><b>Advanced Options:</b></p>"),
+            widgets.HBox([
+                config_widgets['negative_sampling_dropdown'],
+                config_widgets['stock_selection_dropdown']
             ]),
             
             widgets.HTML("<br>"),

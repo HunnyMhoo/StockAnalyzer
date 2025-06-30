@@ -16,7 +16,7 @@ from unittest.mock import patch, MagicMock, mock_open
 
 # Handle imports for both direct execution and package usage
 try:
-    from src.pattern_model_trainer import (
+    from stock_analyzer.analysis import (
         PatternModelTrainer,
         TrainingConfig,
         TrainingResults,
@@ -27,7 +27,7 @@ try:
 except ImportError:
     import sys
     sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-    from src.pattern_model_trainer import (
+    from stock_analyzer.analysis import (
         PatternModelTrainer,
         TrainingConfig,
         TrainingResults,

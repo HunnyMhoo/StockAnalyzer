@@ -151,19 +151,19 @@ print_setup_summary()
 print(f"\n🧪 **Component Status:**")
 
 try:
-    from src.data_fetcher import fetch_hk_stocks
+    from stock_analyzer.data import fetch_hk_stocks
     print("   ✅ Data Fetcher - Ready")
 except ImportError:
     print("   ❌ Data Fetcher - Import Error")
 
 try:
-    from src.feature_extractor import FeatureExtractor
+    from stock_analyzer.features import FeatureExtractor
     print("   ✅ Feature Extractor - Ready")
 except ImportError:
     print("   ❌ Feature Extractor - Import Error")
 
 try:
-    from src.pattern_scanner import PatternScanner
+    from stock_analyzer.patterns import PatternScanner
     print("   ✅ Pattern Scanner - Ready")
 except ImportError:
     print("   ❌ Pattern Scanner - Import Error")

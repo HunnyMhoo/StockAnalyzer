@@ -1020,10 +1020,10 @@ sys.path.insert(0, str(project_root))
 
 # %%
 # Import custom modules
-from src.data_fetcher import fetch_hk_stocks
-from src.feature_extractor import FeatureExtractor
-from src.pattern_scanner import PatternScanner, ScanningConfig
-from src.hk_stock_universe import get_hk_stock_list_static
+from stock_analyzer.data import fetch_hk_stocks
+from stock_analyzer.features import FeatureExtractor
+from stock_analyzer.patterns import PatternScanner, ScanningConfig
+from stock_analyzer.data import get_hk_stock_list_static
 
 # %%
 warnings.filterwarnings('ignore')

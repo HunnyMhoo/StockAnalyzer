@@ -10,8 +10,13 @@ from .widgets import (
 )
 
 from .notebook import (
-    setup_notebook_environment,
-    configure_display_options,
+    NotebookLogger,
+    immediate_feedback_wrapper,
+    create_interactive_progress_bar,
+    quick_test_notebook_output,
+    display_dataframe_summary,
+    nb_logger,
+    nb_print,
 )
 
 __all__ = [
@@ -22,6 +27,11 @@ __all__ = [
     "create_simple_input_form",
     
     # Notebook utilities
-    "setup_notebook_environment",
-    "configure_display_options",
+    "NotebookLogger",
+    "immediate_feedback_wrapper",
+    "create_interactive_progress_bar",
+    "quick_test_notebook_output",
+    "display_dataframe_summary",
+    "nb_logger",
+    "nb_print",
 ] 

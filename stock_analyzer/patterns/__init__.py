@@ -15,8 +15,9 @@ from .labeler import (
 
 from .scanner import (
     PatternScanner,
-    scan_patterns,
-    PatternScannerError,
+    ScanningConfig,
+    scan_hk_stocks_for_patterns,
+    PatternScanningError,
 )
 
 __all__ = [
@@ -32,6 +33,7 @@ __all__ = [
     
     # Pattern scanning
     "PatternScanner",
-    "scan_patterns",
-    "PatternScannerError",
+    "ScanningConfig",
+    "scan_hk_stocks_for_patterns",
+    "PatternScanningError",
 ] 

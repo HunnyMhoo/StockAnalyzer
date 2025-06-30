@@ -16,23 +16,23 @@ from unittest.mock import patch, MagicMock
 
 # Handle imports for both direct execution and package usage
 try:
-    from src.feature_extractor import (
+    from stock_analyzer.features import (
         FeatureExtractor,
         FeatureWindow,
         extract_features_from_labels,
         FeatureExtractionError
     )
-    from src.pattern_labeler import PatternLabel
+    from stock_analyzer.patterns import PatternLabel
 except ImportError:
     import sys
     sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-    from src.feature_extractor import (
+    from stock_analyzer.features import (
         FeatureExtractor,
         FeatureWindow,
         extract_features_from_labels,
         FeatureExtractionError
     )
-    from src.pattern_labeler import PatternLabel
+    from stock_analyzer.patterns import PatternLabel
 
 
 class TestFeatureExtractor:

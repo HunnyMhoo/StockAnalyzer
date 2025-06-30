@@ -21,9 +21,9 @@ from sklearn.metrics import (
 
 # Handle imports for model loading
 try:
-    from .pattern_model_trainer import load_trained_model, TrainingResults
+    from .trainer import load_trained_model, TrainingResults
 except ImportError:
-    from pattern_model_trainer import load_trained_model, TrainingResults
+    from stock_analyzer.analysis.trainer import load_trained_model, TrainingResults
 
 
 # Configuration constants

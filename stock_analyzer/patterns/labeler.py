@@ -16,9 +16,9 @@ import pandas as pd
 
 # Handle imports for both direct execution and package usage
 try:
-    from .data_fetcher import fetch_hk_stocks, _validate_hk_ticker
+    from ..data.fetcher import fetch_hk_stocks, _validate_hk_ticker
 except ImportError:
-    from data_fetcher import fetch_hk_stocks, _validate_hk_ticker
+    from stock_analyzer.data.fetcher import fetch_hk_stocks, _validate_hk_ticker
 
 
 # Configuration constants
@@ -436,9 +436,9 @@ def is_false_breakout(ohlcv_data: pd.DataFrame,
         bool: True if pattern detected
     """
     try:
-        from .technical_indicators import detect_false_support_break, find_recent_support_level
+        from ..features.indicators import detect_false_support_break, find_recent_support_level
     except ImportError:
-        from technical_indicators import detect_false_support_break, find_recent_support_level
+        from stock_analyzer.features.indicators import detect_false_support_break, find_recent_support_level
     
     if len(ohlcv_data) < lookback_days:
         return False
