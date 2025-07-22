@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.stockanalyze.jupytext</string>
+    
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>/Users/test/Documents/StockAnalyze/scripts/watch_and_sync_daemon.sh</string>
+    </array>
+    
+    <key>WorkingDirectory</key>
+    <string>/Users/test/Documents/StockAnalyze</string>
+    
+    <key>RunAtLoad</key>
+    <true/>
+    
+    <key>KeepAlive</key>
+    <true/>
+    
+    <key>StandardOutPath</key>
+    <string>/Users/test/Documents/StockAnalyze/logs/jupytext_sync.log</string>
+    
+    <key>StandardErrorPath</key>
+    <string>/Users/test/Documents/StockAnalyze/logs/jupytext_sync_error.log</string>
+    
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/Users/test/.pyenv/shims:/usr/local/bin:/usr/bin:/bin</string>
+    </dict>
+    
+    <key>ThrottleInterval</key>
+    <integer>60</integer>
+    
+    <key>WatchPaths</key>
+    <array>
+        <string>/Users/test/Documents/StockAnalyze/notebooks</string>
+    </array>
+</dict>
+</plist> 

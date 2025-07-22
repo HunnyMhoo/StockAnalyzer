@@ -19,17 +19,17 @@ from matplotlib.patches import Rectangle
 
 # Handle imports for both direct execution and package usage
 try:
-    from .pattern_labeler import PatternLabel
-    from .data_fetcher import fetch_hk_stocks, _load_cached_data
-    from .technical_indicators import (
+    from ..patterns.labeler import PatternLabel
+    from ..data.fetcher import fetch_hk_stocks, _load_cached_data
+    from ..features.indicators import (
         find_support_resistance_levels, 
         simple_moving_average,
         price_volatility
     )
 except ImportError:
-    from pattern_labeler import PatternLabel
-    from data_fetcher import fetch_hk_stocks, _load_cached_data
-    from technical_indicators import (
+    from stock_analyzer.patterns.labeler import PatternLabel
+    from stock_analyzer.data.fetcher import fetch_hk_stocks, _load_cached_data
+    from stock_analyzer.features.indicators import (
         find_support_resistance_levels, 
         simple_moving_average,
         price_volatility

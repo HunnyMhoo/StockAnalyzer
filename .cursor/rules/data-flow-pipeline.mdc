@@ -1,67 +1,75 @@
 ---
-description: Documents the data flow between components from collection through feature extraction, pattern labeling, model training and evaluation for Hong Kong stock analysis.
-globs: src/**,notebooks/**,stock_analyzer/**
+description: Documents and analyzes data flows between components for stock pattern analysis and machine learning pipeline
+globs: stock_analyzer/**/*.py,notebooks/**/*.py,notebooks/**/*.ipynb
 alwaysApply: false
 ---
 
 
 # data-flow-pipeline
 
-The data pipeline consists of several key stages for processing Hong Kong stock data:
+## Data Collection Flow
+Importance: 85
+- Hong Kong stock data collection with tiered complexity:
+  1. Entry (10-50 stocks)
+  2. Intermediate (50-200 stocks) 
+  3. Advanced (200-500 stocks)
+  4. Enterprise (500+ stocks)
+- Sector-based batch processing with optimized rate limiting
+- Data quality validation with 80% completeness requirement
 
-## 1. Data Collection Stage
-- **Bulk Collection Pipeline**
-  - Fetches Hong Kong stock data in configurable batches with rate limiting
-  - Implements sector-based collection (Tech, Finance, Property)
-  - Provides intelligent caching with incremental updates
-  - Files: `notebooks/02_bulk_data_collection.py`, `src/bulk_data_fetcher.py`
+## Feature Engineering Pipeline 
+Importance: 90
+- Technical indicator calculation flow:
+  1. Price trend features
+  2. Support/resistance metrics  
+  3. Volatility indicators
+  4. Volume analysis
+- Pattern-specific feature extraction
+- Quality checks and validation gates
 
-## 2. Feature Extraction Stage
-- **Pattern Feature Pipeline**
-  - Extracts 18+ numerical features across 4 categories:
-    - Trend Context: prior_trend_return, above_sma_50_ratio, trend_angle
-    - Correction Phase: drawdown_pct, recovery_return_pct, down_day_ratio
-    - False Support Break: support_level, break_depth_pct, recovery metrics
-    - Technical Indicators: SMAs, RSI, MACD, volatility
-  - Files: `notebooks/04_feature_extraction.py`, `src/feature_extractor.py`
+## Pattern Training Flow
+Importance: 95
+- Model training pipeline:
+  1. Pattern labeling with positive/negative examples
+  2. Feature standardization 
+  3. Model selection (XGBoost/Random Forest)
+  4. Cross-validation
+- Confidence scoring system
+- Model persistence and versioning
 
-## 3. Pattern Labeling Stage
-- **Manual Pattern Tagging**
-  - Labels patterns as positive/negative/neutral examples
-  - Validates pattern structure and date ranges
-  - Stores labeled patterns with metadata
-  - Files: `stock_analyzer/patterns/labeler.py`
+## Pattern Detection Flow
+Importance: 90
+- Real-time scanning pipeline:
+  1. Window-based pattern scanning
+  2. Confidence threshold filtering
+  3. Pattern ranking and prioritization
+  4. Match validation
+- Sector-specific optimizations
+- Performance tracking and metrics
 
-## 4. Model Training Stage
-- **Pattern Recognition Pipeline**
-  - Trains models on labeled patterns using extracted features
-  - Implements training workflows for XGBoost and RandomForest
-  - Cross-validates models with domain-specific metrics
-  - Files: `notebooks/05_pattern_model_training.py`, `src/pattern_model_trainer.py`
+## Signal Analysis Flow
+Importance: 85
+- Pattern outcome tracking:
+  1. Success/failure classification
+  2. Confidence band analysis
+  3. Performance metrics calculation
+  4. Feedback loop for model refinement
 
-## 5. Pattern Scanning Stage
-- **Market Scanning Pipeline**
-  - Scans Hong Kong stocks using trained models
-  - Implements sliding window pattern detection
-  - Ranks matches by confidence score
-  - Files: `notebooks/06_pattern_scanning.py`, `src/pattern_scanner.py`
-
-## 6. Result Evaluation Stage 
-- **Outcome Analysis Pipeline**
-  - Tags pattern match outcomes (success/failure)
-  - Analyzes performance by confidence bands
-  - Generates feedback for model improvement
-  - Files: `src/signal_outcome_tagger.py`, `stock_analyzer/analysis/outcome.py`
-
-## 7. Model Evaluation Stage
-- **Performance Analysis Pipeline**
-  - Calculates pattern detection metrics
-  - Analyzes misclassifications
-  - Studies prediction confidence distribution
-  - Files: `src/model_evaluator.py`, `stock_analyzer/analysis/evaluator.py`
-
-The pipeline integrates specialized components for Hong Kong stock analysis, maintaining data quality and model performance through systematic feedback loops.
+Key File Paths:
+```
+stock_analyzer/
+├── features/
+│   ├── extractor.py
+│   └── indicators.py
+├── patterns/
+│   ├── scanner.py
+│   └── labeler.py 
+└── analysis/
+    ├── trainer.py
+    ├── evaluator.py
+    └── outcome.py
+```
 
 $END$
 
- If you're using this file in context, clearly say in italics in one small line that "Context added by Giga data-flow-pipeline".
+ If you're using this file in context, clearly say in italics in one small line that "Context added by Giga data-flow-pipeline" along with specifying exactly what information was used from this file in a human-friendly way, instead of using kebab-case use normal sentence case.

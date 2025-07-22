@@ -36,6 +36,12 @@ class Settings(BaseSettings):
     DEFAULT_WINDOW_SIZE: int = Field(default=30, description="Default window size for pattern scanning")
     DEFAULT_MAX_WINDOWS_PER_TICKER: int = Field(default=5, description="Default maximum windows per ticker")
     
+    # Signal storage configuration
+    SIGNALS_BASE_DIR: str = Field(default="signals", description="Base directory for signal storage")
+    ENABLE_SIGNAL_COMPRESSION: bool = Field(default=True, description="Enable Parquet compression for signals")
+    AUTO_SAVE_SIGNALS: bool = Field(default=True, description="Automatically save scanning results as signals")
+    SIGNAL_RETENTION_DAYS: int = Field(default=365, description="Number of days to retain signal files")
+    
     # Bollinger Bands configuration
     BOLLINGER_WINDOW: int = Field(default=20, description="Bollinger Bands calculation window")
     BOLLINGER_STD_DEV: float = Field(default=2.0, description="Bollinger Bands standard deviation multiplier")

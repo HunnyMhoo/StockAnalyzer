@@ -5,7 +5,7 @@ This module provides standardized setup functionality for all notebooks in the p
 including path configuration, imports, warning filtering, and common utilities.
 
 Usage:
-    from common_setup import setup_notebook, get_project_paths, configure_display
+    from utilities.common_setup import setup_notebook, get_project_paths, configure_display
     setup_notebook()  # Sets up everything needed for most notebooks
 """
 
@@ -29,13 +29,33 @@ def get_project_paths() -> Dict[str, Path]:
     Returns:
         Dict with paths: project_root, src, data, models, features, etc.
     """
-    notebook_dir = Path.cwd()
+    current_dir = Path.cwd()
     
-    # Handle both running from notebooks/ and project root
-    if notebook_dir.name == 'notebooks':
-        project_root = notebook_dir.parent
+    # Find the project root by looking for key indicators
+    project_root = current_dir
+    
+    # Check if we're in the notebooks directory or a subdirectory
+    if current_dir.name == 'notebooks':
+        project_root = current_dir.parent
+    elif 'notebooks' in [p.name for p in current_dir.parents]:
+        # We're in a subdirectory of notebooks, find notebooks parent
+        for parent in current_dir.parents:
+            if parent.name == 'notebooks':
+                project_root = parent.parent
+                break
+    elif (current_dir / 'notebooks').exists():
+        # We're already at project root
+        project_root = current_dir
     else:
-        project_root = notebook_dir
+        # Look for project root indicators (pyproject.toml, requirements.txt, etc.)
+        for parent in [current_dir] + list(current_dir.parents):
+            if any(indicator.exists() for indicator in [
+                parent / 'pyproject.toml', 
+                parent / 'requirements.txt',
+                parent / 'stock_analyzer'
+            ]):
+                project_root = parent
+                break
         
     paths = {
         'notebooks': project_root / 'notebooks',
@@ -53,12 +73,18 @@ def get_project_paths() -> Dict[str, Path]:
     return paths
 
 def configure_python_path() -> None:
-    """Configure Python path to include src directory."""
+    """Configure Python path to include src directory and notebooks directory."""
     paths = get_project_paths()
     src_path = str(paths['src'])
+    notebooks_path = str(paths['notebooks'])
     
+    # Add src directory to path
     if src_path not in sys.path:
         sys.path.insert(0, src_path)
+    
+    # Add notebooks directory to path so utilities can be imported
+    if notebooks_path not in sys.path:
+        sys.path.insert(0, notebooks_path)
 
 def configure_warnings() -> None:
     """Configure warning filters to show important warnings while suppressing noise."""
@@ -131,8 +157,8 @@ def validate_environment() -> Dict[str, bool]:
     
     # Test critical imports
     try:
-        from data_fetcher import fetch_hk_stocks
-        from feature_extractor import FeatureExtractor
+        from stock_analyzer.data import fetch_hk_stocks
+        from stock_analyzer.features import FeatureExtractor
     except ImportError:
         validation['required_imports_available'] = False
     
@@ -270,21 +296,29 @@ def print_setup_summary() -> None:
 def import_common_modules():
     """Import commonly used modules for notebooks."""
     try:
-        from data_fetcher import fetch_hk_stocks, validate_tickers, get_all_cached_tickers
-        from feature_extractor import FeatureExtractor
-        from pattern_scanner import PatternScanner
-        from hk_stock_universe import get_hk_stock_list_static
+        # Import from the new stock_analyzer package structure
+        from stock_analyzer.data import (
+            fetch_hk_stocks, 
+            validate_tickers, 
+            list_cached_tickers,
+            get_hk_stock_list_static
+        )
+        from stock_analyzer.features import FeatureExtractor
+        from stock_analyzer.patterns import PatternScanner
         
         return {
             'fetch_hk_stocks': fetch_hk_stocks,
             'validate_tickers': validate_tickers,
-            'get_all_cached_tickers': get_all_cached_tickers,
+            'get_all_cached_tickers': list_cached_tickers,  # Note: renamed function
             'FeatureExtractor': FeatureExtractor,
             'PatternScanner': PatternScanner,
             'get_hk_stock_list_static': get_hk_stock_list_static
         }
     except ImportError as e:
-        print(f"⚠️ Could not import all common modules: {e}")
+        print(f"❌ Could not import modules from stock_analyzer package: {e}")
+        print("💡 This might indicate missing dependencies or package installation issues.")
+        print("🔧 Try running: pip install -e . from the project root")
+        print("📦 Or check if required packages like yfinance, sklearn, etc. are installed")
         return {}
 
 def print_collection_summary(

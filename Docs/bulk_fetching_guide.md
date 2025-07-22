@@ -6,7 +6,7 @@ This guide explains how to fetch data for **all Hong Kong stocks** using our Sto
 
 ```python
 # Basic example: Fetch top 50 HK stocks
-from bulk_data_fetcher import fetch_top_50_hk_stocks
+from stock_analyzer.data import get_top_hk_stocks, fetch_hk_stocks_bulk
 from datetime import datetime, timedelta
 
 end_date = datetime.now().strftime('%Y-%m-%d')
@@ -85,7 +85,7 @@ print(f"Found {len(stock_info['valid_stocks'])} valid stocks")
 
 ### Strategy 1: Conservative (Recommended for Beginners)
 ```python
-from bulk_data_fetcher import fetch_all_major_hk_stocks
+from stock_analyzer.data import fetch_hk_stocks_bulk
 
 stock_data = fetch_all_major_hk_stocks(
     start_date='2023-01-01',

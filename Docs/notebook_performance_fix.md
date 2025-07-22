@@ -24,7 +24,7 @@ def nb_print(*args, **kwargs):
     print(*args, **kwargs)
     sys.stdout.flush()
 ```
-
+ 
 This forces output to appear immediately instead of being buffered.
 
 ### **2. Updated All Print Statements**
@@ -43,8 +43,8 @@ nb_print("📊 Processing ticker...")    # Shows immediately!
 
 ### **3. Key Files Updated**
 
-- ✅ `src/data_fetcher.py` - Main data fetching functions
-- ✅ `src/bulk_data_fetcher.py` - Bulk operations
+- ✅ `stock_analyzer/data/fetcher.py` - Main data fetching functions  
+- ✅ `stock_analyzer/data/bulk_fetcher.py` - Bulk operations
 - ✅ `src/notebook_utils.py` - Notebook utilities (NEW)
 - ✅ `notebooks/03_quick_output_test.ipynb` - Test notebook (NEW)
 
@@ -125,7 +125,7 @@ sys.stdout.flush()  # Forces immediate display
 
 ### **Single Stock (Fast)**
 ```python
-from data_fetcher import fetch_hk_stocks
+from stock_analyzer.data import fetch_hk_stocks
 
 # Shows progress immediately
 data = fetch_hk_stocks(['0700.HK'], '2024-01-01', '2024-12-31')
@@ -133,7 +133,7 @@ data = fetch_hk_stocks(['0700.HK'], '2024-01-01', '2024-12-31')
 
 ### **Bulk Fetching (With Live Progress)**
 ```python
-from bulk_data_fetcher import fetch_hk_stocks_bulk
+from stock_analyzer.data import fetch_hk_stocks_bulk
 
 # Shows each batch immediately
 bulk_data = fetch_hk_stocks_bulk(

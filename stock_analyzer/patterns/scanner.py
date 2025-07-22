@@ -21,12 +21,14 @@ try:
     from ..analysis.trainer import load_trained_model, ModelTrainingError
     from ..data.fetcher import _load_cached_data
     from ..data.universe import get_hk_stock_list_static, get_top_hk_stocks
+    from ..data.signal_store import SignalStore, convert_scanner_results_to_signals, SignalStoreError
     from ..config import settings
 except ImportError:
     from stock_analyzer.features.extractor import FeatureExtractor, FeatureExtractionError
     from stock_analyzer.analysis.trainer import load_trained_model, ModelTrainingError
     from stock_analyzer.data.fetcher import _load_cached_data
     from stock_analyzer.data.universe import get_hk_stock_list_static, get_top_hk_stocks
+    from stock_analyzer.data.signal_store import SignalStore, convert_scanner_results_to_signals, SignalStoreError
     from stock_analyzer.config import settings
 
 
@@ -52,6 +54,9 @@ class ScanningConfig:
         save_results: Whether to save results to file
         output_filename: Custom output filename (auto-generated if None)
         include_feature_values: Whether to include feature values in output
+        save_as_signals: Whether to save results to signal store
+        pattern_id: Pattern identifier for signal storage
+        signal_date: Date for signal generation (uses current date if None)
     """
     window_size: Optional[int] = None
     min_confidence: Optional[float] = None
@@ -60,6 +65,9 @@ class ScanningConfig:
     save_results: bool = True
     output_filename: Optional[str] = None
     include_feature_values: bool = False
+    save_as_signals: bool = True
+    pattern_id: Optional[str] = None
+    signal_date: Optional[datetime] = None
     
     def __post_init__(self):
         """Set default values from settings if None provided."""
@@ -123,6 +131,12 @@ class PatternScanner:
         # Initialize components
         self.model_package = None
         self.feature_extractor = None
+        
+        # Initialize signal store
+        self.signal_store = SignalStore(
+            base_dir=settings.SIGNALS_BASE_DIR,
+            enable_compression=settings.ENABLE_SIGNAL_COMPRESSION
+        )
         
         # Create output directory
         self._ensure_signals_directory()

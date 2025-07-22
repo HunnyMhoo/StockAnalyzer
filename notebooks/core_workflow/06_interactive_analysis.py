@@ -38,6 +38,16 @@ import sys
 import os
 from pathlib import Path
 
+# Add notebooks directory to path so we can import utilities
+notebook_dir = Path.cwd()
+if notebook_dir.name != 'notebooks':
+    notebooks_path = notebook_dir.parent if notebook_dir.parent.name == 'notebooks' else notebook_dir.parent.parent / 'notebooks'
+else:
+    notebooks_path = notebook_dir
+
+if str(notebooks_path) not in sys.path:
+    sys.path.insert(0, str(notebooks_path))
+
 # Add project root to path
 project_root = Path('.').resolve().parent
 sys.path.insert(0, str(project_root))
@@ -47,7 +57,7 @@ from stock_analyzer.data import fetch_hk_stocks
 from stock_analyzer.features import FeatureExtractor
 from stock_analyzer.patterns import PatternScanner, ScanningConfig
 # PatternVisualizer import removed - not used in this refactored version
-from common_setup import *
+from utilities.common_setup import *
 
 # New modular imports (refactored components)
 from stock_analyzer.analysis import DataQualityAnalyzer

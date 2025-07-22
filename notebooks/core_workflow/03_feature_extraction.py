@@ -98,20 +98,21 @@ else:
 #
 
 # %%
-# Ensure patterns_file is defined
+# Auto-detect patterns file if not defined (handles running cells out of order)
 if 'patterns_file' not in locals():
-    # Check what labeled patterns we have
+    print("🔍 Auto-detecting patterns file...")
     labels_file = "../labels/labeled_patterns.json"
     notebook_labels_file = "labels/labeled_patterns.json"
     
-    # Try both locations
     if os.path.exists(labels_file):
         patterns_file = labels_file
+        print(f"📁 Found: {labels_file}")
     elif os.path.exists(notebook_labels_file):
         patterns_file = notebook_labels_file
+        print(f"📁 Found: {notebook_labels_file}")
     else:
         patterns_file = None
-        print("⚠️  No labeled patterns file found")
+        print("⚠️  No patterns file found")
 
 if patterns_file and os.path.exists(patterns_file):
     print("🔄 Extracting features from labeled patterns...")
@@ -120,7 +121,7 @@ if patterns_file and os.path.exists(patterns_file):
         # Extract features from all labeled patterns
         features_df = extract_features_from_labels(
             labels_file=patterns_file,
-            output_file="../features/notebook_extracted_features.csv"
+            output_file="../features/labeled_features.csv"
         )
         
         if not features_df.empty:
@@ -141,6 +142,8 @@ else:
     print("⚠️  Skipping - no labeled patterns file available")
     features_df = pd.DataFrame()
 
+
+# %%
 
 # %% [raw]
 # ## Feature Analysis and Summary
@@ -227,6 +230,8 @@ if not features_df.empty:
 else:
     print("⚠️  No features available to analyze")
 
+
+# %%
 
 # %% [raw]
 # ## Summary and Next Steps

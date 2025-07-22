@@ -14,9 +14,9 @@ from datetime import datetime
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 try:
-    from src.feature_extractor import FeatureExtractor, extract_features_from_labels
-    from src.pattern_labeler import PatternLabel, PatternLabeler
-    from src.data_fetcher import fetch_hk_stocks
+    from stock_analyzer.features import FeatureExtractor, extract_features_from_labels
+    from stock_analyzer.patterns import PatternLabel, PatternLabeler
+    from stock_analyzer.data import fetch_hk_stocks
 except ImportError as e:
     print(f"Import error: {e}")
     print("Please ensure you're running from the project root directory")

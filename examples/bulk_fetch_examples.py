@@ -11,9 +11,14 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
 
 from datetime import datetime, timedelta
-from hk_stock_universe import *
-from bulk_data_fetcher import *
-from data_fetcher import fetch_hk_stocks
+from stock_analyzer.data import (
+    fetch_hk_stocks,
+    fetch_hk_stocks_bulk,
+    get_hk_stocks_by_sector,
+    get_top_hk_stocks,
+    get_comprehensive_hk_stock_list,
+    create_bulk_fetch_summary
+)
 
 
 def example_1_sector_based_fetching():

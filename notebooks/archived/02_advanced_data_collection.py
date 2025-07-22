@@ -38,7 +38,7 @@
 
 # %%
 # Advanced setup with performance monitoring
-from common_setup import setup_notebook, get_date_range, import_common_modules
+from utilities.common_setup import setup_notebook, get_date_range, import_common_modules
 from datetime import datetime, timedelta
 import pandas as pd
 import numpy as np

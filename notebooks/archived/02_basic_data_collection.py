@@ -37,7 +37,7 @@
 
 # %%
 # Setup using shared utilities
-from common_setup import setup_notebook, get_date_range, import_common_modules
+from utilities.common_setup import setup_notebook, get_date_range, import_common_modules
 from datetime import datetime, timedelta
 import pandas as pd
 import time
@@ -226,7 +226,7 @@ try:
                 continue
     
     # Print comprehensive summary
-    from common_setup import print_collection_summary
+    from utilities.common_setup import print_collection_summary
     print_collection_summary(
         collected_data=collected_data,
         failed_stocks=failed_stocks,

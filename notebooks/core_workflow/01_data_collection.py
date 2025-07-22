@@ -36,33 +36,70 @@
 
 
 # %%
+# Add path setup to find utilities module
+import sys
+import os
+from pathlib import Path
+
+# Add notebooks directory to path so we can import utilities
+notebook_dir = Path.cwd()
+if notebook_dir.name != 'notebooks':
+    notebooks_path = notebook_dir.parent if notebook_dir.parent.name == 'notebooks' else notebook_dir.parent.parent / 'notebooks'
+else:
+    notebooks_path = notebook_dir
+
+if str(notebooks_path) not in sys.path:
+    sys.path.insert(0, str(notebooks_path))
+
+# Also add project root to sys.path for other imports
+project_root = notebooks_path.parent
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
+
 # Use the shared setup utility
-from common_setup import setup_notebook, get_hk_stock_names, get_date_range, import_common_modules
-from datetime import datetime, timedelta
-
-# Set up notebook environment
-validation = setup_notebook()
-
-# Import our data fetching functions
-modules = import_common_modules()
-fetch_hk_stocks = modules['fetch_hk_stocks']
-validate_tickers = modules['validate_tickers']
-
-# Additional specific imports for this notebook
-from data_fetcher import preview_cached_data, list_cached_tickers
-
-print("✅ All imports successful!")
-print(f"📅 Current date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+try:
+    from utilities.common_setup import setup_notebook, get_hk_stock_names, get_date_range, import_common_modules
+    from datetime import datetime, timedelta
+    
+    # Set up notebook environment
+    validation = setup_notebook()
+    
+    # Import our data fetching functions
+    modules = import_common_modules()
+    fetch_hk_stocks = modules['fetch_hk_stocks']
+    validate_tickers = modules['validate_tickers']
+    
+    # Additional specific imports for this notebook
+    from stock_analyzer.data import preview_cached_data, list_cached_tickers
+    
+    print("✅ All imports successful!")
+    print(f"📅 Current date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    
+except ImportError as e:
+    print(f"❌ Import error: {e}")
+    print(f"📂 Current directory: {Path.cwd()}")
+    print(f"📂 Notebooks path: {notebooks_path}")
+    print(f"📂 Project root: {project_root}")
+    print(f"🐍 Python path includes:")
+    for i, path in enumerate(sys.path[:5]):
+        print(f"   {i}: {path}")
+    
+    # Check if utilities directory exists
+    utilities_path = notebooks_path / 'utilities'
+    print(f"📂 Utilities directory exists: {utilities_path.exists()}")
+    if utilities_path.exists():
+        print(f"📂 Utilities contents: {list(utilities_path.glob('*.py'))}")
+    
+    raise
 
 # Get stock names dictionary
 stock_names = get_hk_stock_names()
 
 
-# %%
-## Step 1: Define Target Stocks
-
-Let's define some popular Hong Kong stocks to fetch data for. These are commonly traded stocks that should have good data availability.
-
+# %% [markdown]
+# ## Step 1: Define Target Stocks
+#
+# Let's define some popular Hong Kong stocks to fetch data for. These are commonly traded stocks that should have good data availability.
 
 # %%
 # Define target Hong Kong stocks - Popular, reliable tickers for demo
@@ -91,11 +128,10 @@ for ticker in valid_tickers:
 # %%
 valid_tickers
 
-# %%
-## Step 2: Set Date Range
-
-Define the date range for historical data. We'll fetch approximately 1 year of data for pattern recognition training.
-
+# %% [markdown]
+# ## Step 2: Set Date Range
+#
+# Define the date range for historical data. We'll fetch approximately 1 year of data for pattern recognition training.
 
 # %%
 # Define date range (1 year of data)

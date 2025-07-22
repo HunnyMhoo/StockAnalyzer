@@ -23,8 +23,23 @@
 # This notebook serves as your **master navigation hub** for the entire workflow. Choose your path based on your experience level and objectives.
 
 # %%
+# Add path setup to find utilities module
+import sys
+import os
+from pathlib import Path
+
+# Add notebooks directory to path so we can import utilities
+notebook_dir = Path.cwd()
+if notebook_dir.name != 'notebooks':
+    notebooks_path = notebook_dir.parent if notebook_dir.parent.name == 'notebooks' else notebook_dir.parent.parent / 'notebooks'
+else:
+    notebooks_path = notebook_dir
+
+if str(notebooks_path) not in sys.path:
+    sys.path.insert(0, str(notebooks_path))
+
 # Setup and environment validation
-from common_setup import setup_notebook, print_setup_summary
+from utilities.common_setup import setup_notebook, print_setup_summary
 from datetime import datetime
 
 print("🚀 Initializing Hong Kong Stock Pattern Recognition System...")

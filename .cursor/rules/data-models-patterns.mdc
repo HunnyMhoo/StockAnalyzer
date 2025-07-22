@@ -1,79 +1,83 @@
 ---
-description: Documents pattern data structures, categorization, feature sets, and label classifications for stock market analysis.
-globs: 
+description: Documentation specification for analyzing and documenting data models and patterns related to stock market technical analysis
+globs: stock_analyzer/patterns/**,stock_analyzer/features/**,stock_analyzer/analysis/**,notebooks/core_workflow/**
 alwaysApply: false
 ---
 
 
 # data-models-patterns
 
-## Pattern Data Structures
+## Core Pattern Data Model
 
-### Core Pattern Classifications
-- Positive patterns: Exemplar trading patterns marked for replication
-- Negative patterns: Counter-examples of invalid/undesired patterns 
-- Neutral patterns: Baseline cases for model comparison
+The system implements 18 technical features across 4 key categories for stock pattern analysis:
 
-### Pattern Features (18 Technical Indicators)
+### 1. Trend Context Features (Importance: 95)
+- prior_trend_return: Measures pre-pattern price movement
+- above_sma_50_ratio: Price position relative to moving average
+- trend_angle: Linear regression slope of price movement
+- trend_r2: Trend line fit quality metric
 
-1. Trend Context (4 features)
-- prior_trend_return
-- above_sma_50_ratio  
-- trend_angle
-- up_day_ratio
+### 2. Correction Phase Metrics (Importance: 90) 
+- drawdown_pct: Maximum price decline percentage
+- recovery_return_pct: Bounce magnitude from low
+- down_day_ratio: Proportion of declining days
+- volume_intensity: Volume spike detection
 
-2. Correction Phase (5 features)
-- drawdown_pct
-- recovery_return_pct
-- down_day_ratio
-- correction_duration
-- volume_during_correction
+### 3. Support Break Analysis (Importance: 85)
+- support_level: Key price support identification
+- break_depth_pct: Support violation magnitude
+- false_break_flag: Failed breakdown detection
+- recovery_speed: Post-break price behavior
 
-3. False Support Break (4 features)
-- support_level
-- support_break_depth_pct
-- false_break_flag
-- recovery_days
+### 4. Technical Indicators (Importance: 80)
+- rsi_14: Relative Strength Index
+- macd_hist: MACD histogram values
+- bb_position: Price location in Bollinger Bands
+- volume_sma_ratio: Volume intensity metric
+- price_volatility: Historical volatility measure
+- trend_quality: Trend consistency score
 
-4. Technical Indicators (5 features)
-- sma_5/10/20 crossovers
-- rsi_14
-- macd_diff
+## Pattern Classification System
 
-### Pattern Labels
-- Success: Pattern matched expected outcome
-- Failure: Pattern did not match expected outcome
-- Uncertain: Insufficient data to determine outcome
+Label Categories (Importance: 90):
+1. Positive Patterns
+- Successful false breakdowns
+- Strong trend resumptions
+- High confidence reversals
 
-### Pattern Match Confidence Bands
-- High confidence: >= 0.8
-- Medium confidence: 0.6 - 0.8 
-- Low confidence: < 0.6
+2. Negative Patterns  
+- Failed recoveries
+- Weak trend continuations
+- Low confidence signals
 
-### Pattern Scanning Parameters
-- Window size: 5-30 days
-- Context days: 10-60 days prior
-- Support lookback: 20-120 days
-- Minimum confidence: 0.7 default
+3. Neutral/Uncertain
+- Incomplete patterns
+- Mixed signals
+- Insufficient confirmation
 
-### Quality Metrics
-- Data completeness score (0-1)
-- Feature availability ratio (0-1) 
-- Valid date range check
-- Minimum volume threshold
+## Feature Relationships
 
-### Pattern File Organization
-- Pattern label JSON files
-- Feature CSV export files
-- Match results with timestamps
-- Tagged outcomes by confidence band
+Key Correlations (Importance: 85):
+- Support break depth vs recovery speed
+- Volume intensity vs trend resumption
+- Prior trend return vs recovery magnitude
+- Technical indicator convergence/divergence
 
-Key File Paths:
-- src/pattern_labeler.py
-- src/feature_extractor.py  
-- src/pattern_scanner.py
-- notebooks/04_feature_extraction.ipynb
+Implementation Paths:
+```
+stock_analyzer/features/
+├── extractor.py     # Feature calculation engine
+├── indicators.py    # Technical indicator implementations
+└── validator.py     # Feature quality validation
+
+stock_analyzer/patterns/
+├── scanner.py       # Pattern detection system  
+├── labeler.py       # Pattern classification
+└── analyzer.py      # Pattern relationship analysis
+```
+
+The pattern recognition system emphasizes the relationship between technical features and pattern outcomes, with specialized implementations for Hong Kong market characteristics. Feature extraction and pattern classification are tightly integrated through the validation and analysis pipeline.
 
 $END$
 
- If you're using this file in context, clearly say in italics in one small line that "Context added by Giga data-models-patterns".
+ If you're using this file in context, clearly say in italics in one small line that "Context added by Giga data-models-patterns" along with specifying exactly what information was used from this file in a human-friendly way, instead of using kebab-case use normal sentence case.
