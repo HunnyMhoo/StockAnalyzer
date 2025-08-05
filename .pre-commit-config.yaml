@@ -1,0 +1,63 @@
+repos:
+  # General Python hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+      - id: check-merge-conflict
+      - id: debug-statements
+
+  # Code formatting
+  - repo: https://github.com/psf/black
+    rev: 23.12.1
+    hooks:
+      - id: black
+        language_version: python3
+
+  # Linting
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.6
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+
+  # Type checking
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.8.0
+    hooks:
+      - id: mypy
+        additional_dependencies: [
+          "types-requests",
+          "types-PyYAML",
+          "types-setuptools"
+        ]
+
+  # Notebook quality
+  - repo: https://github.com/nbQA-dev/nbQA
+    rev: 1.7.1
+    hooks:
+      - id: nbqa-ruff
+        args: [--extend-ignore=E501]
+      - id: nbqa-black
+      - id: nbqa-isort
+
+  # Strip notebook outputs
+  - repo: https://github.com/kynan/nbstripout
+    rev: 0.6.1
+    hooks:
+      - id: nbstripout
+        args: [--keep-count, --keep-output]
+
+  # Jupytext sync check
+  - repo: local
+    hooks:
+      - id: jupytext-sync
+        name: jupytext-sync
+        entry: jupytext --sync
+        language: system
+        files: \.ipynb$
+        pass_filenames: true 

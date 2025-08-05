@@ -3,6 +3,13 @@ data/
 */data/
 *.csv
 
+# Project-specific output directories
+charts/
+signals/
+temp_features/
+models/
+*.joblib
+
 # Python
 __pycache__/
 *.py[cod]
@@ -42,4 +49,11 @@ venv/
 
 # OS
 .DS_Store
-Thumbs.db 
+Thumbs.db
+
+# Additional build and cache files
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
