@@ -36,64 +36,30 @@
 
 
 # %%
-# Add path setup to find utilities module
-import sys
-import os
-from pathlib import Path
+# Bootstrap cell for reproducible, tidy notebooks
+from datetime import datetime, timedelta
+from stock_analyzer.utils.notebook import bootstrap, import_common_modules
 
-# Add notebooks directory to path so we can import utilities
-notebook_dir = Path.cwd()
-if notebook_dir.name != 'notebooks':
-    notebooks_path = notebook_dir.parent if notebook_dir.parent.name == 'notebooks' else notebook_dir.parent.parent / 'notebooks'
-else:
-    notebooks_path = notebook_dir
+# Run bootstrap with standard settings
+setup_result = bootstrap(verbose=True, enable_autoreload=True)
 
-if str(notebooks_path) not in sys.path:
-    sys.path.insert(0, str(notebooks_path))
+# Import common modules
+pd, np, plt, sns = import_common_modules()
 
-# Also add project root to sys.path for other imports
-project_root = notebooks_path.parent
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
+# Import stock analyzer modules
+from stock_analyzer.data import fetch_hk_stocks, validate_tickers, list_cached_tickers, preview_cached_data
 
-# Use the shared setup utility
-try:
-    from utilities.common_setup import setup_notebook, get_hk_stock_names, get_date_range, import_common_modules
-    from datetime import datetime, timedelta
-    
-    # Set up notebook environment
-    validation = setup_notebook()
-    
-    # Import our data fetching functions
-    modules = import_common_modules()
-    fetch_hk_stocks = modules['fetch_hk_stocks']
-    validate_tickers = modules['validate_tickers']
-    
-    # Additional specific imports for this notebook
-    from stock_analyzer.data import preview_cached_data, list_cached_tickers
-    
-    print("✅ All imports successful!")
-    print(f"📅 Current date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    
-except ImportError as e:
-    print(f"❌ Import error: {e}")
-    print(f"📂 Current directory: {Path.cwd()}")
-    print(f"📂 Notebooks path: {notebooks_path}")
-    print(f"📂 Project root: {project_root}")
-    print(f"🐍 Python path includes:")
-    for i, path in enumerate(sys.path[:5]):
-        print(f"   {i}: {path}")
-    
-    # Check if utilities directory exists
-    utilities_path = notebooks_path / 'utilities'
-    print(f"📂 Utilities directory exists: {utilities_path.exists()}")
-    if utilities_path.exists():
-        print(f"📂 Utilities contents: {list(utilities_path.glob('*.py'))}")
-    
-    raise
+print("✅ All imports successful!")
+print(f"📅 Current date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
-# Get stock names dictionary
-stock_names = get_hk_stock_names()
+# Get stock names dictionary (using a simple mapping for now)
+stock_names = {
+    "0700.HK": "Tencent",
+    "0005.HK": "HSBC",
+    "0941.HK": "China Mobile",
+    "0388.HK": "HKEX",
+    "1299.HK": "AIA",
+}
 
 
 # %% [markdown]
@@ -104,9 +70,9 @@ stock_names = get_hk_stock_names()
 # %%
 # Define target Hong Kong stocks - Popular, reliable tickers for demo
 target_tickers = [
-    '0700.HK',  # Tencent - Tech leader
-    '0005.HK',  # HSBC - Major bank  
-    '0388.HK',  # HKEX - Local exchange
+    "0700.HK",  # Tencent - Tech leader
+    "0005.HK",  # HSBC - Major bank
+    "0388.HK",  # HKEX - Local exchange
 ]
 
 # Validate ticker formats
@@ -135,8 +101,8 @@ valid_tickers
 
 # %%
 # Define date range (1 year of data)
-end_date = datetime.now().strftime('%Y-%m-%d')
-start_date = (datetime.now() - timedelta(days=365)).strftime('%Y-%m-%d')
+end_date = datetime.now().strftime("%Y-%m-%d")
+start_date = (datetime.now() - timedelta(days=365)).strftime("%Y-%m-%d")
 
 print(f"📅 Date range for data collection:")
 print(f"   Start: {start_date}")
@@ -144,28 +110,30 @@ print(f"   End: {end_date}")
 print(f"   Duration: ~365 days")
 
 # Calculate expected trading days (approximately 250 trading days per year)
-total_days = (datetime.strptime(end_date, '%Y-%m-%d') - datetime.strptime(start_date, '%Y-%m-%d')).days
-expected_trading_days = int(total_days * 5/7 * 0.95)  # Rough estimate excluding weekends and holidays
+total_days = (
+    datetime.strptime(end_date, "%Y-%m-%d") - datetime.strptime(start_date, "%Y-%m-%d")
+).days
+expected_trading_days = int(
+    total_days * 5 / 7 * 0.95
+)  # Rough estimate excluding weekends and holidays
 
 print(f"   Expected trading days: ~{expected_trading_days}")
 
 
-# %%
-## Step 3: Check Existing Cache
-
-Before fetching new data, let's see what's already cached locally.
-
+# %% [markdown]
+# ## Step 3: Check Existing Cache
+#
+# Before fetching new data, let's see what's already cached locally.
 
 # %%
 # Check existing cached data
 print("📁 Current cache status:")
 list_cached_tickers()
 
-
-# %%
-## Step 4: Fetch Stock Data
-
-Now let's fetch the data. This will use intelligent caching - if data already exists, it will only fetch missing data.
+# %% [markdown]
+# ## Step 4: Fetch Stock Data
+#
+# Now let's fetch the data. This will use intelligent caching - if data already exists, it will only fetch missing data.
 
 
 # %%
@@ -176,23 +144,23 @@ stock_data = fetch_hk_stocks(
     tickers=valid_tickers,
     start_date=start_date,
     end_date=end_date,
-    force_refresh=False  # Use cached data when available for faster execution
+    force_refresh=False,  # Use cached data when available for faster execution
 )
 
 print(f"\n✅ Data collection completed!")
 print(f"📊 Successfully fetched data for {len(stock_data)} stocks")
 
 
-# %%
-## Step 5: Data Validation and Preview
-
-Let's validate the fetched data and get a preview of what we have.
+# %% [markdown]
+# ## Step 5: Data Validation and Preview
+#
+# Let's validate the fetched data and get a preview of what we have.
 
 
 # %%
 # Validate data structure and content
 print("🔍 Data validation:")
-print("="*50)
+print("=" * 50)
 
 for ticker, data in stock_data.items():
     print(f"\n📈 {ticker} ({stock_names.get(ticker, 'Unknown')})")
@@ -201,20 +169,22 @@ for ticker, data in stock_data.items():
     print(f"   📋 Columns: {list(data.columns)}")
     print(f"   💰 Price range: ${data['Close'].min():.2f} - ${data['Close'].max():.2f}")
     print(f"   📊 Average volume: {data['Volume'].mean():,.0f}")
-    
+
     # Check for missing data
     missing_data = data.isnull().sum().sum()
     if missing_data > 0:
         print(f"   ⚠️  Missing data points: {missing_data}")
     else:
         print(f"   ✅ No missing data")
-    
+
     # Display recent data sample
     print(f"   📋 Recent data:")
     print(data.tail(3).round(2))
 
 print(f"\n📊 Overall statistics:")
 print(f"   Total records: {sum(len(data) for data in stock_data.values()):,}")
-print(f"   Average records per stock: {sum(len(data) for data in stock_data.values()) / len(stock_data):.0f}")
+print(
+    f"   Average records per stock: {sum(len(data) for data in stock_data.values()) / len(stock_data):.0f}"
+)
 print(f"\n✅ Data validation completed!")
 

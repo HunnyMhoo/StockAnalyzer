@@ -23,32 +23,17 @@
 # This notebook serves as your **master navigation hub** for the entire workflow. Choose your path based on your experience level and objectives.
 
 # %%
-# Add path setup to find utilities module
-import sys
-import os
-from pathlib import Path
-
-# Add notebooks directory to path so we can import utilities
-notebook_dir = Path.cwd()
-if notebook_dir.name != 'notebooks':
-    notebooks_path = notebook_dir.parent if notebook_dir.parent.name == 'notebooks' else notebook_dir.parent.parent / 'notebooks'
-else:
-    notebooks_path = notebook_dir
-
-if str(notebooks_path) not in sys.path:
-    sys.path.insert(0, str(notebooks_path))
-
-# Setup and environment validation
-from utilities.common_setup import setup_notebook, print_setup_summary
+# Bootstrap cell for reproducible, tidy notebooks
 from datetime import datetime
+from stock_analyzer.utils.notebook import bootstrap, print_setup_summary
 
-print("🚀 Initializing Hong Kong Stock Pattern Recognition System...")
-validation = setup_notebook()
+# Run bootstrap with standard settings
+setup_result = bootstrap(verbose=True, enable_autoreload=True)
 
-if validation and all(validation.values()):
-    print("✅ System ready - all components validated!")
-else:
-    print("⚠️ Some components need attention - check setup below")
+# Print setup summary
+print_setup_summary()
+
+print("✅ Notebook bootstrap complete - ready for analysis!")
 
 # %% [markdown]
 # ## 📚 **Workflow Navigation**
@@ -167,27 +152,31 @@ print(f"\n🧪 **Component Status:**")
 
 try:
     from stock_analyzer.data import fetch_hk_stocks
+
     print("   ✅ Data Fetcher - Ready")
 except ImportError:
     print("   ❌ Data Fetcher - Import Error")
 
 try:
     from stock_analyzer.features import FeatureExtractor
+
     print("   ✅ Feature Extractor - Ready")
 except ImportError:
     print("   ❌ Feature Extractor - Import Error")
 
 try:
     from stock_analyzer.patterns import PatternScanner
+
     print("   ✅ Pattern Scanner - Ready")
 except ImportError:
     print("   ❌ Pattern Scanner - Import Error")
 
 # Check data availability
 import os
+
 data_path = "../data"
 if os.path.exists(data_path):
-    hk_files = [f for f in os.listdir(data_path) if f.endswith('.csv') and 'HK' in f]
+    hk_files = [f for f in os.listdir(data_path) if f.endswith(".csv") and "HK" in f]
     print(f"   📊 Cached Data Files: {len(hk_files)}")
 else:
     print("   📊 No cached data found - run data collection first")
