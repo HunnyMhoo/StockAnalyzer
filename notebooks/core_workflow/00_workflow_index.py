@@ -52,9 +52,9 @@ print("✅ Notebook bootstrap complete - ready for analysis!")
 #
 # **Perfect for:** First-time users, demos, proof of concept
 #
-# ### Step 1: Interactive Demo ⭐ **RECOMMENDED START**
-# - **Notebook:** `06_interactive_demo.ipynb`
-# - **What it does:** Complete end-to-end workflow with interactive widgets
+# ### Step 1: Interactive Analysis ⭐ **RECOMMENDED START**
+# - **Notebook:** `06_interactive_analysis.ipynb`
+# - **What it does:** Complete end-to-end workflow with interactive analysis
 # - **Time:** 15-30 minutes
 # - **Features:** 
 #   - Interactive parameter selection
@@ -62,7 +62,7 @@ print("✅ Notebook bootstrap complete - ready for analysis!")
 #   - Automatic model training
 #   - Professional dashboard with visualizations
 #
-# **👉 Click here to start:** [Open Interactive Demo](06_interactive_demo.ipynb)
+# **👉 Click here to start:** [Open Interactive Analysis](06_interactive_analysis.ipynb)
 
 # %% [markdown]
 # ## 📊 **Data Analyst Track - Data-Focused**
@@ -74,19 +74,19 @@ print("✅ Notebook bootstrap complete - ready for analysis!")
 #    - Fetch individual stocks for analysis
 #    - Data validation and caching
 #
-# 2. **Basic Bulk Collection** (`02_basic_data_collection.ipynb`) - 20-30 minutes  
+# 2. **Starter Bulk Collection** (`02_data_collection_starter.ipynb`) - 20-30 minutes  
 #    - Simple, reliable bulk collection (10-50 stocks)
 #    - Perfect for beginners with built-in safety limits
 #
-# 3. **Advanced Bulk Collection** (`02_advanced_data_collection.ipynb`) - 45-90 minutes
+# 3. **Enterprise Bulk Collection** (`02_data_collection_enterprise.ipynb`) - 45-90 minutes
 #    - Enterprise-grade collection (100-500+ stocks)
 #    - Parallel processing and performance optimization
 #
-# 4. **Feature Analysis** (`04_feature_extraction.ipynb`) - 20-30 minutes
+# 4. **Feature Analysis** (`03_feature_extraction.ipynb`) - 20-30 minutes
 #    - Extract 18+ technical indicators
 #    - Pattern feature engineering
 #
-# 5. **Pattern Visualization** (`07_pattern_match_visualization.ipynb`) - 15-20 minutes
+# 5. **Pattern Visualization** (`07_visualization.ipynb`) - 15-20 minutes
 #    - Visualize detected patterns
 #    - Chart analysis with overlays
 
@@ -98,16 +98,16 @@ print("✅ Notebook bootstrap complete - ready for analysis!")
 # ### Full Pipeline Workflow:
 # 1. **Data Foundation** - Use Analyst Track Steps 1-3 above
 #
-# 2. **Model Training** (`05_pattern_model_training.ipynb`) - 30-45 minutes
+# 2. **Model Training** (`04_pattern_training.ipynb`) - 30-45 minutes
 #    - Train XGBoost and Random Forest models
 #    - Cross-validation and performance metrics
 #    - Model comparison and selection
 #
-# 3. **Pattern Scanning** (`06_pattern_scanning.ipynb`) - 20-30 minutes
+# 3. **Pattern Scanning** (`05_pattern_detection.ipynb`) - 20-30 minutes
 #    - Apply trained models to detect patterns
 #    - Generate confidence scores and rankings
 #
-# 4. **Signal Analysis** (`08_signal_outcome_tagging.ipynb`) - 30-60 minutes
+# 4. **Signal Analysis** (`08_signal_analysis.ipynb`) - 30-60 minutes
 #    - Tag pattern outcomes (success/failure)
 #    - Build feedback loops for model improvement
 #    - Performance tracking by confidence bands
@@ -118,7 +118,7 @@ print("✅ Notebook bootstrap complete - ready for analysis!")
 # **Perfect for:** Large-scale analysis, institutional research, production systems
 #
 # ### Enterprise Workflow:
-# 1. **Bulk Data Collection** (`02_bulk_data_collection_improved.ipynb`)
+# 1. **Bulk Data Collection** (`02_data_collection_enterprise.ipynb`)
 #    - Configure for 500+ stocks
 #    - Parallel processing setup
 #    - Enterprise safety controls
