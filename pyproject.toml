@@ -86,7 +86,7 @@ Repository = "https://github.com/your-org/stock-analyzer.git"
 Issues = "https://github.com/your-org/stock-analyzer/issues"
 
 [tool.setuptools.packages.find]
-where = ["."]
+where = ["src"]
 include = ["stock_analyzer*"]
 exclude = ["tests*", "notebooks*", "examples*"]
 
