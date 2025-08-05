@@ -36,7 +36,6 @@ dependencies = [
     "scipy>=1.7.0",
     "scikit-learn>=1.0.0",
 
-
     # Machine learning and model training
     "xgboost>=1.7.0",
     "joblib>=1.2.0",
@@ -49,6 +48,10 @@ dependencies = [
     "matplotlib>=3.5.0",
     "seaborn>=0.11.0",
     "mplfinance>=0.12.10b0",
+
+    # CLI interface
+    "typer>=0.9.0",
+    "rich>=13.0.0",
 ]
 
 [project.optional-dependencies]
@@ -89,6 +92,9 @@ Issues = "https://github.com/your-org/stock-analyzer/issues"
 where = ["src"]
 include = ["stock_analyzer*"]
 exclude = ["tests*", "notebooks*", "examples*"]
+
+[project.scripts]
+stock-analyzer = "stock_analyzer.cli:app"
 
 [tool.setuptools.package-data]
 "stock_analyzer" = ["*.json", "*.yml", "*.yaml"]
